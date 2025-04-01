@@ -1,0 +1,38 @@
+.logo {
+    left: 100px;
+    width: 75px;
+    max-width: 100%;
+}
+
+nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color:rgb(255, 255, 255);
+    padding: 30px 100px;
+}
+
+.foto_perfil {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+}
+
+.campana{
+    width: 60px;
+}
+
+.der{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap:50px;
+    right: 100px;
+}
+
+@media (max-width: 600px) {
+    .logo {
+        left: 10px;  
+        width: 100px;
+    }
+}
