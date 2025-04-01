@@ -24,10 +24,30 @@
                 <li class="list-group-item" onclick=window.location.href="./configuracion.php">Ajustes</li>
             </ul>
         </div>
-        <div id="principal"></div>
+        <div id="principal">
+            @foreach($publicaciones as $post)
+                <div class="card" style="width: 50%; margin-bottom: 20px;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <img src="{{ $post->creador_imagen }}" style="width: 75px; border-radius: 50%;" alt="Imagen de {{ $post->titulo }}">
+                            <p class="card-text">{{ $post->creador ? $post->creador->nombre : 'Usuario desconocido' }}</p>
+                        </div>
+                        <h5 class="card-title">{{ $post->titulo }}</h5>
+                        <p class="card-text">{{ $post->contenido }}</p>
+                    </div>
+                    <img src="{{ $post->imagen }}" class="card-img-bottom" alt="Imagen de {{ $post->titulo }}">
+                    <div class="card-footer">
+                        <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
+                        <img src="{{ asset('images/Like.png') }}" style="width: 25px;" alt="Me gusta">
+                    </div>
+                </div>
+            @endforeach
+        </div>
         <div id="crear">
             <div id="subir">
-                <button type="button" class="btn btn-primary btn-lg" id="subirX">Subir</button>
+                <button id="subirX" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#subirModal">
+                    Subir Publicación
+                </button>
             </div>
             <div id="generos">
                 <ul class="list-group">
@@ -46,38 +66,31 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="subirModalLabel">Subir Publicación o Evento</h5>
+                    <h5 class="modal-title" id="subirModalLabel">Subir Publicación</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" method="post" enctype="multipart/form-data">
-                    <form id="subirForm">
-                        <div class="form-group">
-                            <label for="tipo">Tipo</label>
-                            <select class="form-control" id="tipo" name="tipo">
-                                <option value="publicacion">Publicación</option>
-                                <option value="evento">Evento</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="titulo">Título</label>
+                <div class="modal-body">
+                    <form action="{{ route('inicio.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título</label>
                             <input type="text" class="form-control" id="titulo" name="titulo" required>
                         </div>
-                        <div class="form-group">
-                            <label for="contenido">Contenido</label>
+                        <div class="mb-3">
+                            <label for="contenido" class="form-label">Descripción</label>
                             <textarea class="form-control" id="contenido" name="contenido" rows="3" required></textarea>
                         </div>
-                        <div class="form-group">
-                            <label for="imagen">Imagen</label>
-                            <input type="file" class="form-control-file" id="imagen" name="imagen">
+                        <div class="mb-3">
+                            <label for="imagen" class="form-label">Imagen</label>
+                            <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
                         </div>
-                        <button type="submit" class="btn btn-primary">Subir</button>
+                        <button type="submit" class="btn btn-success">Subir</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!--<script src="{{ asset('js/inicio.js') }}"></script>-->
 
 </body>
 </html>

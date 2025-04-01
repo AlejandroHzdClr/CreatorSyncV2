@@ -12,7 +12,7 @@ class CreateUsuariosTable extends Migration
             $table->id();
             $table->string('nombre', 100);
             $table->string('email', 100)->unique();
-            $table->string('contraseña');
+            $table->string('password');
             $table->enum('rol', ['admin', 'moderador', 'creador', 'usuario'])->default('usuario');
             $table->timestamps();
             $table->string('avatar', 255)->nullable();
