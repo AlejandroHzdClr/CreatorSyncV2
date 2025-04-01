@@ -13,6 +13,6 @@ class Publicacion extends Model {
     protected $fillable = ['usuario_id', 'titulo', 'contenido', 'imagen'];
 
     public function usuario() {
-        return $this->belongsTo(User::class, 'usuario_id');
+        return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 }

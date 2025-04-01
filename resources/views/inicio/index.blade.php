@@ -29,13 +29,13 @@
                 <div class="card" style="width: 50%; margin-bottom: 20px;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
-                            <img src="{{ $post->creador_imagen }}" style="width: 75px; border-radius: 50%;" alt="Imagen de {{ $post->titulo }}">
-                            <p class="card-text">{{ $post->creador ? $post->creador->nombre : 'Usuario desconocido' }}</p>
+                            <img src="{{ $post->usuario && $post->usuario->avatar ? asset($post->usuario->avatar) : asset('images/PerfilPredeterminado.jpg')}}" style="width: 75px; border-radius: 50%;" alt="Imagen de {{ $post->titulo }}">
+                            <p class="card-text">{{ $post->usuario ? $post->usuario->nombre : 'Usuario desconocido' }}</p>
                         </div>
                         <h5 class="card-title">{{ $post->titulo }}</h5>
                         <p class="card-text">{{ $post->contenido }}</p>
                     </div>
-                    <img src="{{ $post->imagen }}" class="card-img-bottom" alt="Imagen de {{ $post->titulo }}">
+                    <img src="{{ $post->imagen }}" class="card-img-bottom" style="max-height: 500px; width: auto; height: auto; object-fit: contain;" alt="Imagen de {{ $post->titulo }}">
                     <div class="card-footer">
                         <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
                         <img src="{{ asset('images/Like.png') }}" style="width: 25px;" alt="Me gusta">

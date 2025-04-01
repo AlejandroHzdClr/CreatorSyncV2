@@ -35,7 +35,6 @@ class PublicacionController extends Controller {
             'imagen' => $rutaImagen ? asset("storage/$rutaImagen") : null,
             
         ]);
-        dd($rutaImagen); // para ver la ruta generada
 
         return response()->json(['success' => 'Publicación subida correctamente', 'data' => $publicacion]);
     }
