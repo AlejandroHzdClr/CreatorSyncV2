@@ -2,6 +2,7 @@
     left: 100px;
     width: 75px;
     max-width: 100%;
+    cursor: pointer;
 }
 
 nav{
@@ -16,10 +17,12 @@ nav{
     width: 75px;
     height: 75px;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 .campana{
     width: 60px;
+    cursor: pointer;
 }
 
 .der{
@@ -36,3 +39,43 @@ nav{
         width: 100px;
     }
 }
+/* Estilos para el menú */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1000;
+    min-width: 150px;
+}
+
+.dropdown-menu a,
+.dropdown-menu button {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: black;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu button:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+

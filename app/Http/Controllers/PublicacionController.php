@@ -22,20 +22,20 @@ class PublicacionController extends Controller {
             'contenido' => 'required|string',
             'imagen' => 'nullable|image|max:2048',
         ]);
-
+    
         $usuario_id = Auth::id(); // Obtiene el ID del usuario autenticado
-
+    
         // Guardar imagen si existe
         $rutaImagen = $request->file('imagen') ? $request->file('imagen')->store('uploads', 'public') : null;
-
+    
         $publicacion = Publicacion::create([
             'usuario_id' => $usuario_id,
             'titulo' => $request->titulo,
             'contenido' => $request->contenido,
             'imagen' => $rutaImagen ? asset("storage/$rutaImagen") : null,
-            
         ]);
-
-        return response()->json(['success' => 'Publicación subida correctamente', 'data' => $publicacion]);
+    
+        // Redirigir a index con un mensaje de éxito
+        return redirect()->route('inicio.index')->with('success', 'Publicación subida correctamente');
     }
 }

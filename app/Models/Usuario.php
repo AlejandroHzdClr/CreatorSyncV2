@@ -37,15 +37,8 @@ class Usuario extends Authenticatable
         return $this->hasMany(Publicacion::class, 'usuario_id');
     }
 
-    // Si deseas hacer hashing de la password al momento de guardar:
     public static function boot()
     {
         parent::boot();
-        
-        static::creating(function ($user) {
-            if ($user->password) {
-                $user->password = bcrypt($user->password); // Hash de la password
-            }
-        });
     }
 }

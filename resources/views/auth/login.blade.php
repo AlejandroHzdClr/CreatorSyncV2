@@ -8,6 +8,12 @@
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
+            @if ($errors->has('error'))
+                <div class="alert alert-danger">
+                    {{ $errors->first('error') }}
+                </div>
+            @endif
+
             <!-- Nombre de Usuario -->
             <div class="mb-4">
                 <x-input-label for="nombre" :value="__('Nombre de usuario')" />
@@ -23,14 +29,6 @@
                             name="password"
                             required autocomplete="current-password" />
                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
-            </div>
-
-            <!-- Recordarme -->
-            <div class="flex items-center mb-6">
-                <label for="remember_me" class="inline-flex items-center">
-                    <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                    <span class="ms-2 text-sm text-gray-600">{{ __('Recordarme') }}</span>
-                </label>
             </div>
 
             <!-- Botones -->

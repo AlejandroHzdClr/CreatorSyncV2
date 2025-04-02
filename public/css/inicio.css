@@ -25,12 +25,12 @@ body{
 
 #principal {
     display: flex;
-    flex-direction: column; /* Asegura que los elementos fluyan hacia abajo */
-    align-items: center; /* Centra los elementos si es necesario */
-    width: 100%; /* Se ajusta al ancho disponible */
-    overflow-y: auto; /* Permite el scroll si es necesario */
-    max-height: 85vh; /* Evita que crezca más allá del viewport */
-    padding-top: 0; /* Asegura que no haya espacio extra arriba */
+    flex-direction: column; 
+    align-items: center; 
+    width: 100%; 
+    overflow-y: auto; 
+    max-height: 85vh; 
+    padding-top: 0;
     border-left: 1px solid black;
     border-right: 1px solid black;
     border-top: 1px solid black;
@@ -52,4 +52,14 @@ body{
 }
 html {
     scroll-behavior: smooth;
+}
+.alert-success {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1050;
+    width: auto;
+    max-width: 90%;
+    text-align: center;
 }

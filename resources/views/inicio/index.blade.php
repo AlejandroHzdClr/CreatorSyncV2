@@ -11,7 +11,13 @@
 <body>
 @include('layouts.nav')
 
+@if(session('success'))
+    <div id="success-message" class="alert alert-success" role="alert">
+        {{ session('success') }}
+    </div>
+@endif
     <div id="todo">
+    
         <div id="opciones">
             <ul class="list-group">
                 <li class="list-group-item" onclick=window.location.href="./inicio.php">Inicio</li>
@@ -90,6 +96,16 @@
             </div>
         </div>
     </div>
+    <script>
+        setTimeout(() => {
+            const successMessage = document.getElementById('success-message');
+            if (successMessage) {
+                successMessage.style.transition = 'opacity 0.5s';
+                successMessage.style.opacity = '0';
+                setTimeout(() => successMessage.remove(), 500);
+            }
+        }, 3000);
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

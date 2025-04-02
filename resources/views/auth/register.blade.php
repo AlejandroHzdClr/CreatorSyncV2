@@ -7,6 +7,12 @@
         <form method="POST" action="{{ route('register') }}">
             @csrf
 
+            @if ($errors->has('error'))
+                <div class="alert alert-danger">
+                    {{ $errors->first('error') }}
+                </div>
+            @endif
+
             <div class="form-group">
                 <label for="nombre">Nombre</label>
                 <input type="text" class="form-control" id="nombre" name="nombre" value="{{ old('nombre') }}" required>
