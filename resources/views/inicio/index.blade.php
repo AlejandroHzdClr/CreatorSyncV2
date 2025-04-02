@@ -41,7 +41,10 @@
                         <h5 class="card-title">{{ $post->titulo }}</h5>
                         <p class="card-text">{{ $post->contenido }}</p>
                     </div>
-                    <img src="{{ $post->imagen }}" class="card-img-bottom" style="max-height: 500px; width: auto; height: auto; object-fit: contain;" alt="Imagen de {{ $post->titulo }}">
+                    <img src="{{ $post->imagen }}" 
+                        class="card-img-bottom" 
+                        style="max-height: 500px; max-width: 100%; min-height: 200px; min-width: 200px; object-fit: contain;" 
+                        alt="Imagen de {{ $post->titulo }}">                    
                     <div class="card-footer">
                         <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
                         <img src="{{ asset('images/Like.png') }}" style="width: 25px;" alt="Me gusta">
