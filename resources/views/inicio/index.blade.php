@@ -18,39 +18,45 @@
 @endif
     <div id="todo">
     
-        <div id="opciones">
+        <!-- <div id="opciones">
             <ul class="list-group">
-                <li class="list-group-item" onclick=window.location.href="./inicio.php">Inicio</li>
+                <li class="list-group-item" onclick=window.location.href="./inicio">Inicio</li>
                 <li class="list-group-item">Posts</li>
-                <li class="list-group-item">Eventos</li>
                 <li class="list-group-item d-flex justify-content-between align-items-center" onclick=window.location.href="./notificaciones.php">
                     Notificaciones
-                   <!--<span class="badge text-bg-primary rounded-pill">11</span> -->
                 </li>
                 <li class="list-group-item" onclick=window.location.href="./configuracion.php">Ajustes</li>
             </ul>
-        </div>
+        </div> -->
         <div id="principal">
-            @foreach($publicaciones as $post)
-                <div class="card" style="width: 50%; margin-bottom: 20px;">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3">
-                            <img src="{{ $post->usuario && $post->usuario->avatar ? asset($post->usuario->avatar) : asset('images/PerfilPredeterminado.jpg')}}" style="width: 75px; border-radius: 50%;" alt="Imagen de {{ $post->titulo }}">
-                            <p class="card-text">{{ $post->usuario ? $post->usuario->nombre : 'Usuario desconocido' }}</p>
-                        </div>
-                        <h5 class="card-title">{{ $post->titulo }}</h5>
-                        <p class="card-text">{{ $post->contenido }}</p>
+        @foreach($publicaciones as $post)
+            <div class="card" style="width: 50%; margin-bottom: 20px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <a href="{{ route('perfil.show', $post->usuario->id) }}">
+                            <img src="{{ $post->usuario && $post->usuario->avatar ? asset($post->usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}" 
+                                style="width: 75px; border-radius: 50%;" 
+                                alt="Imagen de {{ $post->titulo }}">
+                        </a>
+                        <p class="card-text">
+                            
+                            {{ $post->usuario ? $post->usuario->nombre : 'Usuario desconocido' }}
+                            
+                        </p>
                     </div>
-                    <img src="{{ $post->imagen }}" 
-                        class="card-img-bottom" 
-                        style="max-height: 500px; max-width: 100%; min-height: 200px; min-width: 200px; object-fit: contain;" 
-                        alt="Imagen de {{ $post->titulo }}">                    
-                    <div class="card-footer">
-                        <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
-                        <img src="{{ asset('images/Like.png') }}" style="width: 25px;" alt="Me gusta">
-                    </div>
+                    <h5 class="card-title">{{ $post->titulo }}</h5>
+                    <p class="card-text">{{ $post->contenido }}</p>
                 </div>
-            @endforeach
+                <img src="{{ $post->imagen }}" 
+                    class="card-img-bottom" 
+                    style="max-height: 500px; max-width: 100%; min-height: 200px; min-width: 200px; object-fit: contain;" 
+                    alt="Imagen de {{ $post->titulo }}">
+                <div class="card-footer">
+                    <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
+                    <img src="{{ asset('images/Like.png') }}" style="width: 25px;" alt="Me gusta">
+                </div>
+            </div>
+        @endforeach
         </div>
         <div id="crear">
             <div id="subir">
@@ -99,6 +105,7 @@
             </div>
         </div>
     </div>
+    @include('layouts.footer')
     <script>
         setTimeout(() => {
             const successMessage = document.getElementById('success-message');

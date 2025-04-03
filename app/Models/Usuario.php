@@ -11,7 +11,7 @@ class Usuario extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'usuarios';  // Asegúrate de que se refiere a tu tabla 'usuarios'
+    protected $table = 'usuarios';
 
     protected $fillable = [
         'nombre',
@@ -32,13 +32,27 @@ class Usuario extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    // Relación con la tabla perfiles (uno a uno)
+    public function perfil()
+    {
+        return $this->hasOne(Perfil::class, 'usuario_id');
+    }
+
+    // Relación con la tabla seguidores (uno a muchos)
+    public function seguidores()
+    {
+        return $this->hasMany(Seguidores::class, 'seguido_id');
+    }
+
+    // Relación con los usuarios que sigue (uno a muchos inverso)
+    public function siguiendo()
+    {
+        return $this->hasMany(Seguidores::class, 'usuario_id');
+    }
+
+    // Relación con publicaciones (uno a muchos)
     public function publicaciones()
     {
         return $this->hasMany(Publicacion::class, 'usuario_id');
-    }
-
-    public static function boot()
-    {
-        parent::boot();
     }
 }

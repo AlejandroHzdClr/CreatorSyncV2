@@ -19,16 +19,15 @@
 
             <!-- Menú desplegable personalizado -->
             <div class="dropdown">
-                <img src="{{ asset('images/PerfilPredeterminado.jpg') }}" alt="Perfil" class="foto_perfil">
+                <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('images/PerfilPredeterminado.jpg') }}" alt="Perfil" class="foto_perfil">
                 <div class="dropdown-menu">
-                    <a href="{{ route('inicio.perfil') }}">Perfil</a>
-                    <a href="{{ route('inicio.perfil') }}">Configuración</a>
+                    <a href="{{ route('perfil.show', Auth::user()->id) }}">Perfil</a>
+                    <a href="{{ route('perfil.show', Auth::user()->id) }}">Configuración</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit">Cerrar sesión</button>
                     </form>
                 </div>
-            </div>
         </div>
     </nav>
 
