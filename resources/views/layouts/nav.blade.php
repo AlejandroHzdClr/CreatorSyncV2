@@ -11,8 +11,9 @@
     <!-- Barra de navegación -->
     <nav class="navbar navbar-light bg-white px-5 py-3 border-bottom shadow-sm w-100">
         <!-- Logo -->
-        <img src="{{ asset('images/CreatorsSyncLogo.png') }}" alt="CreatorsSyncLogo" class="logo" onclick="window.location.href = 'inicio'">
-
+        <a href="{{ route('inicio.index') }}">
+            <img src="{{ asset('images/CreatorsSyncLogo.png') }}" alt="CreatorsSyncLogo" class="logo" >
+        </a>
         <!-- Iconos de la derecha -->
         <div class="d-flex align-items-center gap-3 ms-auto">
             <img src="{{ asset('images/Campana.png') }}" alt="Notificaciones" class="campana cursor-pointer">
