@@ -21,24 +21,40 @@ class ConfiguracionController extends Controller
     {
         $usuario = Auth::user();
 
+        // Validar solo los campos que están presentes en la solicitud
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:usuarios,email,' . $usuario->id,
+            'nombre' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255|unique:usuarios,email,' . $usuario->id,
             'foto' => 'nullable|image|max:2048',
         ]);
 
-        $usuario->nombre = $request->nombre;
-        $usuario->email = $request->email;
+        // Actualizar el nombre si está presente
+        if ($request->filled('nombre')) {
+            $usuario->nombre = $request->nombre;
+        }
 
+        // Actualizar el email si está presente
+        if ($request->filled('email')) {
+            $usuario->email = $request->email;
+        }
+
+        // Manejar la subida de la foto si está presente
         if ($request->hasFile('foto')) {
+            // Eliminar la imagen anterior si existe
+            if ($usuario->avatar) {
+                $rutaAnterior = str_replace(asset('storage/'), '', $usuario->avatar);
+                \Storage::disk('public')->delete($rutaAnterior);
+            }
+
+            // Guardar la nueva imagen
             $rutaImagen = $request->file('foto')->store('avatars', 'public');
             $usuario->avatar = asset("storage/$rutaImagen");
         }
 
+        // Guardar los cambios en el usuario
         $usuario->save();
 
-        return response()->json(['success' => 'Perfil actualizado correctamente.']);
-    }
+        return redirect()->route('configuracion.index')->with('success', 'Perfil actualizado correctamente.');    }
 
     public function updateSeguridad(Request $request)
     {
@@ -56,8 +72,7 @@ class ConfiguracionController extends Controller
         $usuario->password = Hash::make($request->newPassword);
         $usuario->save();
 
-        return response()->json(['success' => 'Contraseña actualizada correctamente.']);
-    }
+        return redirect()->route('configuracion.index')->with('success', 'Perfil actualizado correctamente.');    }
 
     public function updateNotificaciones(Request $request)
     {
