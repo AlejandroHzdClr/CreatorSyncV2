@@ -12,6 +12,16 @@
 <body>
 @include('layouts.nav')
 
+<!-- Overlay de carga -->
+<div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 1050; text-align: center;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p style="margin-top: 10px;">Procesando...</p>
+    </div>
+</div>
+
 <div class="body">
     <div id="foto_perfil">
         <img src="{{ $usuario->avatar ? asset($usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}" 
@@ -68,6 +78,16 @@
 
 <script>
     $(document).ready(function () {
+        // Mostrar el overlay de carga
+        function mostrarCargando() {
+            $('#loading-overlay').fadeIn();
+        }
+
+        // Ocultar el overlay de carga
+        function ocultarCargando() {
+            $('#loading-overlay').fadeOut();
+        }
+
         // Manejar el evento de clic en el botón de seguir o dejar de seguir
         $('.seguir-button').on('click', function () {
             const button = $(this);
@@ -76,6 +96,9 @@
 
             // Determinar la URL para seguir o dejar de seguir
             const url = isFollowing ? `/dejar-de-seguir/${usuarioId}` : `/seguir/${usuarioId}`;
+
+            // Mostrar el loader
+            mostrarCargando();
 
             // Enviar la solicitud AJAX
             $.ajax({
@@ -91,10 +114,14 @@
                     } else {
                         button.removeClass('btn-primary').addClass('btn-danger').text('Dejar de seguir');
                     }
-                    $('#seguidores-count').text(response.seguidores_count);
+                    $('#seguidores-count').text(response.seguidores_count); // Actualizar el número de seguidores
                 },
                 error: function (xhr) {
                     console.error('Error al seguir o dejar de seguir:', xhr.responseText);
+                },
+                complete: function () {
+                    // Ocultar el loader
+                    ocultarCargando();
                 }
             });
         });

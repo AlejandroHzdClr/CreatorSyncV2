@@ -16,7 +16,12 @@
         </a>
         <!-- Iconos de la derecha -->
         <div class="d-flex align-items-center gap-3 ms-auto">
+        <div class="position-relative">
             <img src="{{ asset('images/Campana.png') }}" alt="Notificaciones" class="campana cursor-pointer">
+            @if($notificacionesNoLeidas > 0)
+                <span class="notificacion-indicador"></span>
+            @endif
+        </div>
 
             <!-- Menú desplegable personalizado -->
             <div class="dropdown">

@@ -10,6 +10,7 @@ use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\SeguidorController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ComentarioController;
+use App\Http\Controllers\NotificacionController;
 
 
 Route::get('/dashboard', function () {
@@ -50,6 +51,13 @@ Route::middleware('auth')->group(function () {
     // Rutas relacionadas con comentarios
     Route::post('/comentarios/{id}', [ComentarioController::class, 'store'])->name('comentarios.store');
     Route::get('/comentarios/{id}', [ComentarioController::class, 'index'])->name('comentarios.index');
+
+    // Rutas relacionadas con notificaciones
+    Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
+    Route::patch('/notificaciones/{id}/marcar-leida', [NotificacionController::class, 'marcarLeida'])->name('notificaciones.marcarLeida');
+    Route::delete('/notificaciones/{id}/eliminar', [NotificacionController::class, 'eliminar'])->name('notificaciones.eliminar');
+    Route::delete('/notificaciones', [NotificacionController::class, 'eliminarTodas'])->name('notificaciones.eliminarTodas');
+    Route::patch('/notificaciones/marcar-todas-leidas', [NotificacionController::class, 'marcarTodasLeidas'])->name('notificaciones.marcarTodasLeidas');
 
 });
 

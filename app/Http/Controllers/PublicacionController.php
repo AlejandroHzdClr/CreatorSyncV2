@@ -6,13 +6,20 @@ use Illuminate\Http\Request;
 use App\Models\Publicacion;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Notificacion;
+
 
 class PublicacionController extends Controller {
     public function index() {
         // Obtener publicaciones con información del usuario
         $publicaciones = Publicacion::with('usuario')->orderBy('created_at', 'desc')->get();
         
-        return view('inicio.index', compact('publicaciones'));
+        // Obtener notificaciones
+        $notificacionesNoLeidas = Notificacion::where('usuario_id', Auth::id())
+            ->where('leida', false)
+            ->count();
+
+        return view('inicio.index', compact('publicaciones' , 'notificacionesNoLeidas'));
     }
 
     // Subir publicación

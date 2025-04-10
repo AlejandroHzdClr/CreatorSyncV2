@@ -5,6 +5,7 @@ use App\Models\Seguidor;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Notificacion;
 
 class SeguidorController extends Controller
 {
@@ -12,27 +13,30 @@ class SeguidorController extends Controller
     {
         $usuario = Auth::user();
 
-        // Verificar si ya sigue al usuario
-        if (Seguidor::where('usuario_id', $usuario->id)->where('seguido_id', $id)->exists()) {
-            return redirect()->back()->with('message', 'Ya sigues a este usuario.');
+        if (!$usuario->siguiendo->contains('seguido_id', $id)) {
+            $usuario->siguiendo()->create(['seguido_id' => $id]);
+
+            // Crear la notificación
+            $seguido = Usuario::findOrFail($id);
+            Notificacion::create([
+                'usuario_id' => $id,
+                'mensaje' => "{$usuario->nombre} comenzó a seguirte.",
+            ]);
         }
 
-        // Crear el registro de seguimiento
-        Seguidor::create([
-            'usuario_id' => $usuario->id,
-            'seguido_id' => $id,
-        ]);
+        $seguidoresCount = Usuario::find($id)->seguidores->count();
 
-        return redirect()->back()->with('message', 'Has comenzado a seguir a este usuario.');
+        return response()->json(['seguidores_count' => $seguidoresCount]);
     }
 
     public function dejarDeSeguir($id)
     {
         $usuario = Auth::user();
 
-        // Eliminar el registro de seguimiento
-        Seguidor::where('usuario_id', $usuario->id)->where('seguido_id', $id)->delete();
+        $usuario->siguiendo()->where('seguido_id', $id)->delete();
 
-        return redirect()->back()->with('message', 'Has dejado de seguir a este usuario.');
+        $seguidoresCount = Usuario::find($id)->seguidores->count();
+
+        return response()->json(['seguidores_count' => $seguidoresCount]);
     }
 }

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use App\Models\Notificacion;
+use Illuminate\Support\Facades\Auth;
+
 
 class PerfilController extends Controller
 {
@@ -13,6 +16,10 @@ class PerfilController extends Controller
             ->withCount('seguidores') // Cuenta los seguidores
             ->findOrFail($id);
 
-        return view('inicio.perfil', compact('usuario'));
+        $notificacionesNoLeidas = Notificacion::where('usuario_id', Auth::id())
+            ->where('leida', false)
+            ->count();
+
+        return view('inicio.perfil', compact('usuario', 'notificacionesNoLeidas'));
     }
 }

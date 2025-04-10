@@ -68,7 +68,15 @@
             </div>
         @endforeach
         </div>
-
+<!-- Overlay de carga -->
+<div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 1050; text-align: center;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p style="margin-top: 10px;">Procesando...</p>
+    </div>
+</div>
         <div class="modal fade" id="comentariosModal-{{ $post->id }}" tabindex="-1" aria-labelledby="comentariosModalLabel-{{ $post->id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -152,71 +160,51 @@
         }, 3000);
 
         $(document).ready(function () {
-            // Manejar el evento de clic en el botón de like
             $('.like-button').on('click', function (event) {
-                event.preventDefault();
+            event.preventDefault();
 
-                const button = $(this);
-                const publicacionId = button.data('publicacion-id');
-                const likeCountElement = $(`.like-count[data-publicacion-id="${publicacionId}"]`);
-                const likeImage = button.find('img');
+            const button = $(this);
+            const publicacionId = button.data('publicacion-id');
+            const likeCountElement = $(`.like-count[data-publicacion-id="${publicacionId}"]`);
+            const likeImage = button.find('img');
 
-                // Determinar si el usuario ya dio like
-                const isLiked = likeImage.attr('src').includes('LikeDado.png');
+            // Determinar si el usuario ya dio like
+            const isLiked = likeImage.attr('src').includes('LikeDado.png');
 
-                // URL para dar o quitar like
-                const url = isLiked ? `/unlike/${publicacionId}` : `/like/${publicacionId}`;
+            // URL para dar o quitar like
+            const url = isLiked ? `/unlike/${publicacionId}` : `/like/${publicacionId}`;
 
-                // Enviar la solicitud AJAX
-                $.ajax({
-                    url: url,
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function (response) {
-                        // Actualizar el contador de likes
-                        const newLikeCount = response.like_count;
-                        likeCountElement.text(`${newLikeCount} Me gusta`);
+            // Mostrar el overlay de carga
+            $('#loading-overlay').fadeIn();
 
-                        // Cambiar la imagen del botón
-                        if (isLiked) {
-                            likeImage.attr('src', '{{ asset('images/Like.png') }}');
-                        } else {
-                            likeImage.attr('src', '{{ asset('images/LikeDado.png') }}');
-                        }
-                    },
-                    error: function (xhr) {
-                        console.error('Error al procesar el like:', xhr.responseText);
+            // Enviar la solicitud AJAX
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    // Actualizar el contador de likes
+                    const newLikeCount = response.like_count;
+                    likeCountElement.text(`${newLikeCount} Me gusta`);
+
+                    // Cambiar la imagen del botón
+                    if (isLiked) {
+                        likeImage.attr('src', '{{ asset('images/Like.png') }}');
+                    } else {
+                        likeImage.attr('src', '{{ asset('images/LikeDado.png') }}');
                     }
-                });
+                },
+                error: function (xhr) {
+                    console.error('Error al procesar el like:', xhr.responseText);
+                },
+                complete: function () {
+                    // Ocultar el overlay de carga
+                    $('#loading-overlay').fadeOut();
+                }
             });
         });
-        $(document).ready(function () {
-            // Cargar comentarios al cargar la página
-            $('.comentarios-list').each(function () {
-                const publicacionId = $(this).data('publicacion-id');
-                const comentariosList = $(this);
-
-                $.ajax({
-                    url: `/comentarios/${publicacionId}`,
-                    method: 'GET',
-                    success: function (comentarios) {
-                        comentarios.forEach(comentario => {
-                            comentariosList.append(`
-                                <div class="comentario">
-                                    <strong>${comentario.usuario.nombre}:</strong> ${comentario.contenido}
-                                </div>
-                            `);
-                        });
-                    },
-                    error: function (xhr) {
-                        console.error('Error al cargar los comentarios:', xhr.responseText);
-                    }
-                });
-            });
-
-            // Manejar el envío de comentarios
             $('.comentario-form').on('submit', function (event) {
                 event.preventDefault();
 
@@ -226,6 +214,10 @@
                 const contenido = input.val();
                 const comentariosList = $(`.comentarios-list[data-publicacion-id="${publicacionId}"]`);
 
+                // Mostrar el overlay de carga
+                $('#loading-overlay').fadeIn();
+
+                // Enviar la solicitud AJAX
                 $.ajax({
                     url: `/comentarios/${publicacionId}`,
                     method: 'POST',
@@ -243,6 +235,10 @@
                     },
                     error: function (xhr) {
                         console.error('Error al agregar el comentario:', xhr.responseText);
+                    },
+                    complete: function () {
+                        // Ocultar el overlay de carga
+                        $('#loading-overlay').fadeOut();
                     }
                 });
             });

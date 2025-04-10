@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Notificacion;
+
 
 class ConfiguracionController extends Controller
 {
@@ -13,8 +15,12 @@ class ConfiguracionController extends Controller
         // Obtén el usuario autenticado
         $usuario = Auth::user();
 
+        $notificacionesNoLeidas = Notificacion::where('usuario_id', Auth::id())
+            ->where('leida', false)
+            ->count();
+
         // Retorna la vista con los datos del usuario
-        return view('configuracion.index', compact('usuario'));
+        return view('configuracion.index', compact('usuario', 'notificacionesNoLeidas'));
     }
 
     public function updatePerfil(Request $request)
