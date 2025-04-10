@@ -1,58 +1,55 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="flex flex-col md:flex-row bg-white shadow-xl rounded-2xl overflow-hidden max-w-4xl w-full mx-auto my-12">
 
-    <div class="max-w-md w-full mx-auto bg-white p-8 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">{{ __('Iniciar sesión') }}</h2>
+        <!-- Lado del logo -->
+        <div class="md:w-1/2 bg-indigo-600 flex items-center justify-center p-10">
+            <img src="{{ asset('images/CreatorsSyncLogo.png') }}" alt="Logo" class="w-44 h-44 hover:scale-110 transition-transform duration-300">
+        </div>
 
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
+        <!-- Lado del formulario -->
+        <div class="md:w-1/2 p-8 md:p-12 bg-white">
+            <h2 class="text-3xl font-bold text-gray-800 text-center mb-6">Iniciar sesión</h2>
 
-            @if ($errors->has('error'))
-                <div class="alert alert-danger">
-                    {{ $errors->first('error') }}
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+
+                <!-- Usuario -->
+                <div class="mb-4">
+                    <x-input-label for="nombre" :value="__('Nombre de usuario')" />
+                    <x-text-input id="nombre" name="nombre" type="text"
+                        class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                        :value="old('nombre')" required autofocus autocomplete="username" />
+                    <x-input-error :messages="$errors->get('nombre')" class="mt-1" />
                 </div>
-            @endif
 
-            <!-- Nombre de Usuario -->
-            <div class="mb-4">
-                <x-input-label for="nombre" :value="__('Nombre de usuario')" />
-                <x-text-input id="nombre" class="block mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" type="text" name="nombre" :value="old('nombre')" required autofocus autocomplete="username" />
-                <x-input-error :messages="$errors->get('nombre')" class="mt-2" />
-            </div>
+                <!-- Contraseña -->
+                <div class="mb-6">
+                    <x-input-label for="password" :value="__('Contraseña')" />
+                    <x-text-input id="password" name="password" type="password"
+                        class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                        required autocomplete="current-password" />
+                    <x-input-error :messages="$errors->get('password')" class="mt-1" />
+                </div>
 
-            <!-- Contraseña -->
-            <div class="mb-6">
-                <x-input-label for="password" :value="__('Contraseña')" />
-                <x-text-input id="password" class="block mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
-            </div>
-
-            <!-- Botones -->
-            <div class="flex items-center justify-between">
-                <div class="text-sm">
+                <!-- Olvidaste contraseña + botón -->
+                <div class="flex items-center justify-between mb-4">
                     @if (Route::has('password.request'))
-                        <a class="underline text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                            {{ __('¿Olvidaste tu contraseña?') }}
+                        <a class="text-sm text-indigo-600 hover:text-indigo-800" href="{{ route('password.request') }}">
+                            ¿Olvidaste tu contraseña?
                         </a>
                     @endif
+
+                    <x-primary-button class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition-colors duration-200">
+                        {{ __('Entrar') }}
+                    </x-primary-button>
                 </div>
+            </form>
 
-                <x-primary-button class="ml-3 bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500">
-                    {{ __('Iniciar sesión') }}
-                </x-primary-button>
-            </div>
-        </form>
-
-        <!-- Botón para ir al registro -->
-        <div class="text-center mt-6">
-            <span class="text-sm text-gray-600">¿No tienes cuenta?</span>
-            <a href="{{ route('register') }}" class="ml-2 text-indigo-600 hover:text-indigo-700">
-                {{ __('Regístrate aquí') }}
-            </a>
+            <!-- Enlace a registro -->
+            <p class="text-center text-sm text-gray-600 mt-6">
+                ¿No tienes cuenta?
+                <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-800">Regístrate aquí</a>
+            </p>
         </div>
     </div>
 </x-guest-layout>

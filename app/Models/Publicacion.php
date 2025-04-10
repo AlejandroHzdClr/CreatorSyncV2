@@ -15,4 +15,14 @@ class Publicacion extends Model {
     public function usuario() {
         return $this->belongsTo(Usuario::class, 'usuario_id');
     }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'publicacion_id');
+    }
+    
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class, 'publicacion_id');
+    }
 }

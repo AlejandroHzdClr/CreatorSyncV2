@@ -17,17 +17,6 @@
     </div>
 @endif
     <div id="todo">
-    
-        <!-- <div id="opciones">
-            <ul class="list-group">
-                <li class="list-group-item" onclick=window.location.href="./inicio">Inicio</li>
-                <li class="list-group-item">Posts</li>
-                <li class="list-group-item d-flex justify-content-between align-items-center" onclick=window.location.href="./notificaciones.php">
-                    Notificaciones
-                </li>
-                <li class="list-group-item" onclick=window.location.href="./configuracion.php">Ajustes</li>
-            </ul>
-        </div> -->
         <div id="principal">
         @foreach($publicaciones as $post)
             <div class="card" style="width: 50%; margin-bottom: 20px;">
@@ -51,27 +40,59 @@
                     class="card-img-bottom" 
                     style="max-height: 500px; max-width: 100%; min-height: 200px; min-width: 200px; object-fit: contain;" 
                     alt="Imagen de {{ $post->titulo }}">
-                <div class="card-footer">
-                    <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
-                    <img src="{{ asset('images/Like.png') }}" style="width: 25px;" alt="Me gusta">
-                </div>
+                    <div class="card-footer">
+                        <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
+
+                        <!-- Formulario para agregar un comentario -->
+                        <form class="comentario-form" data-publicacion-id="{{ $post->id }}" style="margin-top: 10px;">
+                            @csrf
+                            <div class="input-group">
+                                <input type="text" class="form-control comentario-input" placeholder="Escribe un comentario..." required>
+                                <button class="btn btn-primary" type="submit">Comentar</button>
+                            </div>
+                        </form>
+
+                        <!-- Lista de comentarios -->
+                        <div class="comentarios-list" data-publicacion-id="{{ $post->id }}" style="margin-top: 10px;">
+                            <!-- Los comentarios se cargarán aquí dinámicamente -->
+                        </div>
+                        <button class="btn btn-link p-0 like-button" data-publicacion-id="{{ $post->id }}">
+                            <img src="{{ Auth::user()->likes->contains('publicacion_id', $post->id) ? asset('images/LikeDado.png') : asset('images/Like.png') }}" 
+                                style="width: 25px;" 
+                                alt="Me gusta">
+                        </button>
+
+                        <!-- Contador de likes -->
+                        <span class="like-count" data-publicacion-id="{{ $post->id }}">{{ $post->likes->count() }} Me gusta</span>
+                    </div>
             </div>
         @endforeach
         </div>
+
+        <div class="modal fade" id="comentariosModal-{{ $post->id }}" tabindex="-1" aria-labelledby="comentariosModalLabel-{{ $post->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="comentariosModalLabel-{{ $post->id }}">{{ $post->titulo }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ $post->contenido }}</p>
+                <img src="{{ $post->imagen }}" class="img-fluid" alt="Imagen de {{ $post->titulo }}">
+                <hr>
+                <h5>Comentarios</h5>
+                <div class="todos-comentarios-list" data-publicacion-id="{{ $post->id }}">
+                    <!-- Los comentarios se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
         <div id="crear">
             <div id="subir">
                 <button id="subirX" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#subirModal">
                     Subir Publicación
                 </button>
-            </div>
-            <div id="generos">
-                <ul class="list-group">
-                    <li class="list-group-item">Juegos</li>
-                    <li class="list-group-item">Fitness</li>
-                    <li class="list-group-item">Arte</li>
-                    <li class="list-group-item">Just Talking</li>
-                    <li class="list-group-item">Noticias</li>
-                </ul>
             </div>
         </div>
     </div>
@@ -107,6 +128,20 @@
     </div>
     @include('layouts.footer')
     <script>
+        // Previsualización de la imagen seleccionada
+        function previewImage(event) {
+            const imagePreview = document.getElementById('image-preview');
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Ocultar el mensaje de éxito después de 3 segundos
         setTimeout(() => {
             const successMessage = document.getElementById('success-message');
             if (successMessage) {
@@ -115,6 +150,103 @@
                 setTimeout(() => successMessage.remove(), 500);
             }
         }, 3000);
+
+        $(document).ready(function () {
+            // Manejar el evento de clic en el botón de like
+            $('.like-button').on('click', function (event) {
+                event.preventDefault();
+
+                const button = $(this);
+                const publicacionId = button.data('publicacion-id');
+                const likeCountElement = $(`.like-count[data-publicacion-id="${publicacionId}"]`);
+                const likeImage = button.find('img');
+
+                // Determinar si el usuario ya dio like
+                const isLiked = likeImage.attr('src').includes('LikeDado.png');
+
+                // URL para dar o quitar like
+                const url = isLiked ? `/unlike/${publicacionId}` : `/like/${publicacionId}`;
+
+                // Enviar la solicitud AJAX
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        // Actualizar el contador de likes
+                        const newLikeCount = response.like_count;
+                        likeCountElement.text(`${newLikeCount} Me gusta`);
+
+                        // Cambiar la imagen del botón
+                        if (isLiked) {
+                            likeImage.attr('src', '{{ asset('images/Like.png') }}');
+                        } else {
+                            likeImage.attr('src', '{{ asset('images/LikeDado.png') }}');
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error('Error al procesar el like:', xhr.responseText);
+                    }
+                });
+            });
+        });
+        $(document).ready(function () {
+            // Cargar comentarios al cargar la página
+            $('.comentarios-list').each(function () {
+                const publicacionId = $(this).data('publicacion-id');
+                const comentariosList = $(this);
+
+                $.ajax({
+                    url: `/comentarios/${publicacionId}`,
+                    method: 'GET',
+                    success: function (comentarios) {
+                        comentarios.forEach(comentario => {
+                            comentariosList.append(`
+                                <div class="comentario">
+                                    <strong>${comentario.usuario.nombre}:</strong> ${comentario.contenido}
+                                </div>
+                            `);
+                        });
+                    },
+                    error: function (xhr) {
+                        console.error('Error al cargar los comentarios:', xhr.responseText);
+                    }
+                });
+            });
+
+            // Manejar el envío de comentarios
+            $('.comentario-form').on('submit', function (event) {
+                event.preventDefault();
+
+                const form = $(this);
+                const publicacionId = form.data('publicacion-id');
+                const input = form.find('.comentario-input');
+                const contenido = input.val();
+                const comentariosList = $(`.comentarios-list[data-publicacion-id="${publicacionId}"]`);
+
+                $.ajax({
+                    url: `/comentarios/${publicacionId}`,
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        contenido: contenido,
+                    },
+                    success: function (response) {
+                        comentariosList.append(`
+                            <div class="comentario">
+                                <strong>{{ Auth::user()->nombre }}:</strong> ${contenido}
+                            </div>
+                        `);
+                        input.val(''); // Limpiar el campo de entrada
+                    },
+                    error: function (xhr) {
+                        console.error('Error al agregar el comentario:', xhr.responseText);
+                    }
+                });
+            });
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 

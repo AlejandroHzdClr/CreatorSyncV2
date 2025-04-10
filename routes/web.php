@@ -7,6 +7,9 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\SeguidorController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\ComentarioController;
 
 
 Route::get('/dashboard', function () {
@@ -36,6 +39,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/configuracion/seguridad', [ConfiguracionController::class, 'updateSeguridad'])->name('configuracion.updateSeguridad');
     Route::post('/configuracion/notificaciones', [ConfiguracionController::class, 'updateNotificaciones'])->name('configuracion.updateNotificaciones');
     
+    // Rutas relacionadas con seguidores
+    Route::post('/seguir/{id}', [SeguidorController::class, 'seguir'])->name('seguir');
+    Route::post('/dejar-de-seguir/{id}', [SeguidorController::class, 'dejarDeSeguir'])->name('dejarDeSeguir');
+
+    // Rutas relacionadas con likes
+    Route::post('/like/{id}', [LikeController::class, 'like'])->name('like');
+    Route::post('/unlike/{id}', [LikeController::class, 'unlike'])->name('unlike');
+
+    // Rutas relacionadas con comentarios
+    Route::post('/comentarios/{id}', [ComentarioController::class, 'store'])->name('comentarios.store');
+    Route::get('/comentarios/{id}', [ComentarioController::class, 'index'])->name('comentarios.index');
+
 });
 
 require __DIR__.'/auth.php';

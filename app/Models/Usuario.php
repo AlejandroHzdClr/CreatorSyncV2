@@ -55,4 +55,10 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(Publicacion::class, 'usuario_id');
     }
+
+    // Relación con likes (uno a muchos)
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'usuario_id');
+    }
 }
