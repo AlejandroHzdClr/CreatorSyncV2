@@ -2,6 +2,35 @@
 
 @include('layouts.nav')
 @section('content')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+    #loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 1050;
+    text-align: center;
+}
+
+#loading-overlay .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+</style>
+<!-- Overlay de carga -->
+<div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 1050; text-align: center;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p style="margin-top: 10px;">Procesando...</p>
+    </div>
+</div>
+
 <div class="container">
     <h1>Notificaciones</h1>
 
@@ -36,13 +65,7 @@
             <li class="list-group-item">No tienes notificaciones.</li>
         @endforelse
     </ul>
-
-    <!-- Paginación -->
-    <div class="mt-3">
-        {{ $notificaciones->links() }}
-    </div>
 </div>
-
 <script>
     $(document).ready(function () {
         // Mostrar el overlay de carga

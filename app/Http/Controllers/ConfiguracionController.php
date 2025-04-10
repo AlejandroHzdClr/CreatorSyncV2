@@ -72,7 +72,7 @@ class ConfiguracionController extends Controller
         ]);
 
         if (!Hash::check($request->password, $usuario->password)) {
-            return response()->json(['error' => 'La contraseña actual no es correcta.'], 400);
+            return redirect()->route('configuracion.index')->withErrors(['error' => 'La contraseña actual no es correcta.']);
         }
 
         $usuario->password = Hash::make($request->newPassword);

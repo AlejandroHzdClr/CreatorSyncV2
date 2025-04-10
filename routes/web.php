@@ -15,7 +15,7 @@ use App\Http\Controllers\NotificacionController;
 
 Route::get('/dashboard', function () {
     return view('inicio.index');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('inicio.index');
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [PublicacionController::class, 'index'])->name('inicio.index');

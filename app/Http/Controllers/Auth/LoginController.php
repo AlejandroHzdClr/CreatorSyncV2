@@ -30,7 +30,7 @@ class LoginController extends Controller
         if ($usuario && Hash::check($request->password, $usuario->password)) {
             // Autenticación exitosa, iniciar sesión
             Auth::login($usuario);
-            return redirect()->intended('/dashboard');
+            return redirect()->intended('/inicio')->with('success', 'Inicio de sesión exitoso. ¡Bienvenido de nuevo!');
         } else {
             // Autenticación fallida
             return back()->withErrors(['error' => 'Credenciales incorrectas.']);
