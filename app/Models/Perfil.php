@@ -13,9 +13,12 @@ class Perfil extends Model
 
     protected $fillable = [
         'usuario_id',
-        'redes_sociales',
         'contenido_favorito',
         'web',
+    ];
+
+    protected $casts = [
+        'redes_sociales' => 'array',
     ];
 
     // Relación con el usuario (uno a uno inverso)

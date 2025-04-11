@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
     // Rutas relacionadas con el registro y login
     Route::get('/perfil/{id}', [PerfilController::class, 'show'])->name('perfil.show');
+    Route::put('/perfil/{id}', [PerfilController::class, 'update'])->name('perfil.update');
     Route::post('/perfil/{id}/follow', [PerfilController::class, 'follow'])->name('perfil.follow');
 
     // Rutas relacionadas con la configuración

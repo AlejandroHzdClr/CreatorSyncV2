@@ -22,6 +22,51 @@
     </div>
 </div>
 
+<!-- Modal para editar perfil -->
+<div class="modal fade" id="editarPerfilModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editarPerfilForm" method="POST" action="{{ route('perfil.update', $usuario->id) }}">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarPerfilModalLabel">Editar Perfil</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ $usuario->descripcion }}</textarea>
+                    </div>
+                    <!-- Redes Sociales -->
+                    <div class="mb-3">
+                        <label for="redes_sociales" class="form-label">Redes Sociales</label>
+                        <div id="redesSocialesInputs">
+                            @if($usuario->perfil && !empty($usuario->perfil->redes_sociales))
+                                @foreach($usuario->perfil->redes_sociales as $index => $red)
+                                    @if(is_array($red) && isset($red['nombre'], $red['url']))
+                                        <div class="input-group mb-2">
+                                            <input type="text" class="form-control" name="redes[{{ $index }}][nombre]" value="{{ $red['nombre'] }}" placeholder="Nombre de la red social">
+                                            <input type="url" class="form-control" name="redes[{{ $index }}][url]" value="{{ $red['url'] }}" placeholder="URL de la red social">
+                                            <button type="button" class="btn btn-danger eliminar-red" onclick="eliminarRed(this)">Eliminar</button>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @endif
+                        </div>
+                        <button type="button" class="btn btn-primary mt-2" id="agregarRed">Agregar Red Social</button> 
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="body">
     <div id="foto_perfil">
         <img src="{{ $usuario->avatar ? asset($usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}" 
@@ -30,10 +75,14 @@
         
         <!-- Mostrar el botón de edición solo si el perfil pertenece al usuario autenticado -->
         @if(Auth::id() === $usuario->id)
-            <div id="edicion">
-                <img src="{{ asset('images/editar.png') }}" alt="Editar" class="editar">
-                <h2>Editar tu Perfil</h2>
-            </div>
+        <div id="edicion">
+            <img src="{{ asset('images/editar.png') }}" alt="Editar" class="editar">
+            <h2>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editarPerfilModal">
+                    Editar tu Perfil
+                </button>
+            </h2>
+        </div>
         @endif
     </div>
 
@@ -56,12 +105,13 @@
             @endif
 
             <div id="redes_sociales">
-                @if($usuario->perfil && $usuario->perfil->redes_sociales)
-                    @php
-                        $redes = json_decode($usuario->perfil->redes_sociales, true);
-                    @endphp
-                    @foreach($redes as $nombre => $url)
-                        <a href="{{ $url }}" target="_blank">{{ ucfirst($nombre) }}</a><br>
+                @if($usuario->perfil && !empty($usuario->perfil->redes_sociales))
+                    @foreach($usuario->perfil->redes_sociales as $red)
+                        @if(is_array($red) && isset($red['nombre'], $red['url']))
+                            <a href="{{ $red['url'] }}" target="_blank" class="btn btn-outline-primary mb-2">
+                                {{ ucfirst($red['nombre']) }}
+                            </a>
+                        @endif
                     @endforeach
                 @else
                     <p>No hay redes sociales disponibles.</p>
@@ -71,13 +121,72 @@
 
         <div id="biografia">
             <h1>Biografía</h1>
-            <p id="contenido_biografia">{{ $usuario->descripcion ?? 'No hay biografía disponible.' }}</p>
+            <p id="contenido_biografia" style="white-space: pre-wrap;">{{ $usuario->descripcion ?? 'No hay biografía disponible.' }}</p>
+        </div>
+
+        <div id="ultimo_post">
+            <h1>Último Post</h1>
+            @if($ultimoPost)
+                <div class="card" style="width: 50%; margin-bottom: 20px;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <a href="{{ route('perfil.show', $ultimoPost->usuario->id) }}">
+                                <img src="{{ $ultimoPost->usuario && $ultimoPost->usuario->avatar ? asset($ultimoPost->usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}" 
+                                    style="width: 75px; border-radius: 50%;" 
+                                    alt="Imagen de {{ $ultimoPost->titulo }}">
+                            </a>
+                            <p class="card-text">
+                                {{ $ultimoPost->usuario ? $ultimoPost->usuario->nombre : 'Usuario desconocido' }}
+                            </p>
+                        </div>
+                        <h5 class="card-title">{{ $ultimoPost->titulo }}</h5>
+                        <p class="card-text" style="white-space: pre-wrap;">{{ $ultimoPost->contenido }}</p>
+                    </div>
+                    @if($ultimoPost->imagen)
+                        <img src="{{ $ultimoPost->imagen }}" 
+                            class="card-img-bottom" 
+                            style="max-height: 500px; max-width: 100%; min-height: 200px; min-width: 200px; object-fit: contain;" 
+                            alt="Imagen de {{ $ultimoPost->titulo }}">
+                    @endif
+                    <div class="card-footer">
+                        <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
+                        <span>{{ $ultimoPost->comentarios->count() }} Comentarios</span>
+                        <button class="btn btn-link p-0 like-button" data-publicacion-id="{{ $ultimoPost->id }}">
+                            <img src="{{ Auth::user()->likes->contains('publicacion_id', $ultimoPost->id) ? asset('images/LikeDado.png') : asset('images/Like.png') }}" 
+                                style="width: 25px;" 
+                                alt="Me gusta">
+                        </button>
+                        <span class="like-count" data-publicacion-id="{{ $ultimoPost->id }}">{{ $ultimoPost->likes->count() }} Me gusta</span>
+                    </div>
+                </div>
+            @else
+                <p>No hay posts disponibles.</p>
+            @endif
         </div>
     </div>
 </div>
 
 <script>
     $(document).ready(function () {
+
+        let redIndex = {{ isset($usuario->perfil->redes_sociales) ? count($usuario->perfil->redes_sociales) : 0 }};
+
+        // Agregar un nuevo campo para redes sociales
+        $('#agregarRed').on('click', function () {
+            const nuevaRed = `
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" name="redes[${redIndex}][nombre]" placeholder="Nombre de la red social">
+                    <input type="url" class="form-control" name="redes[${redIndex}][url]" placeholder="URL de la red social">
+                    <button type="button" class="btn btn-danger eliminar-red" onclick="eliminarRed(this)">Eliminar</button>
+                </div>`;
+            $('#redesSocialesInputs').append(nuevaRed);
+            redIndex++;
+        });
+
+        // Eliminar un campo de red social
+        window.eliminarRed = function (button) {
+            $(button).closest('.input-group').remove();
+        };
         // Mostrar el overlay de carga
         function mostrarCargando() {
             $('#loading-overlay').fadeIn();

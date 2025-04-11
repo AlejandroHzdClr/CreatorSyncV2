@@ -34,7 +34,7 @@
                         </p>
                     </div>
                     <h5 class="card-title">{{ $post->titulo }}</h5>
-                    <p class="card-text">{{ $post->contenido }}</p>
+                    <p class="card-text" style="white-space: pre-wrap;">{{ $post->contenido }}</p>
                 </div>
                 <img src="{{ $post->imagen }}" 
                     class="card-img-bottom" 
