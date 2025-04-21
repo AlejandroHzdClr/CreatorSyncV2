@@ -17,7 +17,9 @@
         <!-- Iconos de la derecha -->
         <div class="d-flex align-items-center gap-3 ms-auto">
         <div class="position-relative">
-            <img src="{{ asset('images/Campana.png') }}" alt="Notificaciones" class="campana cursor-pointer">
+            <a href="{{ route('notificaciones.index') }}">
+                <img src="{{ asset('images/Campana.png') }}" alt="Notificaciones" class="campana cursor-pointer" onclick="">
+            </a>
             @if($notificacionesNoLeidas > 0)
                 <span class="notificacion-indicador"></span>
             @endif
@@ -25,7 +27,10 @@
 
             <!-- Menú desplegable personalizado -->
             <div class="dropdown">
-                <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('images/PerfilPredeterminado.jpg') }}" alt="Perfil" class="foto_perfil">
+                <img src="{{ Auth::user() && Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('images/PerfilPredeterminado.jpg') }}" 
+                    alt="Perfil" 
+                    class="foto_perfil" 
+                    style="width: 75px; border-radius: 50%;">
                 <div class="dropdown-menu">
                     <a href="{{ route('perfil.show', Auth::user()->id) }}">Perfil</a>
                     <a href="{{ route('configuracion.index', Auth::user()->id) }}">Configuración</a>
@@ -34,7 +39,7 @@
                         <button type="submit">Cerrar sesión</button>
                     </form>
                 </div>
-        </div>
+            </div>
     </nav>
 
 </body>

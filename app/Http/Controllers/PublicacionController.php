@@ -18,8 +18,11 @@ class PublicacionController extends Controller {
         $notificacionesNoLeidas = Notificacion::where('usuario_id', Auth::id())
             ->where('leida', false)
             ->count();
-
-        return view('inicio.index', compact('publicaciones' , 'notificacionesNoLeidas'));
+    
+        // Obtener el avatar del usuario autenticado
+        $avatar = Auth::user()->avatar;
+    
+        return view('inicio.index', compact('publicaciones', 'notificacionesNoLeidas', 'avatar'));
     }
 
     // Subir publicación
@@ -39,7 +42,7 @@ class PublicacionController extends Controller {
             'usuario_id' => $usuario_id,
             'titulo' => $request->titulo,
             'contenido' => $request->contenido,
-            'imagen' => $rutaImagen ? asset("storage/$rutaImagen") : null,
+            'imagen' => $rutaImagen ,
         ]);
     
         // Redirigir a index con un mensaje de éxito

@@ -16,7 +16,6 @@
         {{ session('success') }}
     </div>
 @endif
-
 <div id="todo">
     <div id="principal">
         @foreach($publicaciones as $post)

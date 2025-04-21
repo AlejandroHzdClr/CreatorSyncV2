@@ -64,7 +64,7 @@
                         <div class="mb-3">
                             <label for="foto" class="form-label">Foto de perfil</label>
                             <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
-                            <img id="preview" src="{{ Auth::user()->avatar }}" alt="Vista previa" class="img-thumbnail mt-3" style="max-width: 200px; display: block;">
+                            <img id="preview" src="{{ $usuario->avatar ? asset('storage/' . $usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}" alt="Vista previa" class="img-thumbnail mt-3" style="max-width: 200px; display: block;">
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </form>

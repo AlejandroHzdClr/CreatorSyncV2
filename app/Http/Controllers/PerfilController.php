@@ -6,6 +6,7 @@ use App\Models\Usuario;
 use Illuminate\Http\Request;
 use App\Models\Notificacion;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Publicacion;
 
 
 class PerfilController extends Controller
@@ -13,17 +14,16 @@ class PerfilController extends Controller
     public function show($id)
     {
         $usuario = Usuario::with(['perfil', 'seguidores', 'siguiendo'])
-            ->withCount('seguidores') // Cuenta los seguidores
+            ->withCount('seguidores')
             ->findOrFail($id);
 
         $notificacionesNoLeidas = Notificacion::where('usuario_id', Auth::id())
             ->where('leida', false)
             ->count();
 
-        // Obtener el último post del usuario
-        $ultimoPost = $usuario->publicaciones()->latest()->first();
+        $publicaciones = Publicacion::where('usuario_id', $id)->with(['likes', 'comentarios'])->latest()->get();
 
-        return view('inicio.perfil', compact('usuario', 'notificacionesNoLeidas', 'ultimoPost'));
+        return view('inicio.perfil', compact('usuario', 'publicaciones', 'notificacionesNoLeidas'));
     }
 
     public function update(Request $request, $id)

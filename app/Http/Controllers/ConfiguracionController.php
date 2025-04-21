@@ -48,19 +48,19 @@ class ConfiguracionController extends Controller
         if ($request->hasFile('foto')) {
             // Eliminar la imagen anterior si existe
             if ($usuario->avatar) {
-                $rutaAnterior = str_replace(asset('storage/'), '', $usuario->avatar);
-                \Storage::disk('public')->delete($rutaAnterior);
+                \Storage::disk('public')->delete($usuario->avatar);
             }
 
             // Guardar la nueva imagen
-            $rutaImagen = $request->file('foto')->store('avatars', 'public');
-            $usuario->avatar = asset("storage/$rutaImagen");
+            $rutaImagen = $request->file('foto')->store('uploads', 'public');
+            $usuario->avatar = $rutaImagen; // Guardar solo la ruta relativa
         }
 
         // Guardar los cambios en el usuario
         $usuario->save();
 
-        return redirect()->route('configuracion.index')->with('success', 'Perfil actualizado correctamente.');    }
+        return redirect()->route('configuracion.index')->with('success', 'Perfil actualizado correctamente.');
+    }
 
     public function updateSeguridad(Request $request)
     {
@@ -78,7 +78,8 @@ class ConfiguracionController extends Controller
         $usuario->password = Hash::make($request->newPassword);
         $usuario->save();
 
-        return redirect()->route('configuracion.index')->with('success', 'Perfil actualizado correctamente.');    }
+        return redirect()->route('configuracion.index')->with('success', 'Perfil actualizado correctamente.');    
+    }
 
     public function updateNotificaciones(Request $request)
     {

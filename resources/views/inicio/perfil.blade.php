@@ -22,56 +22,11 @@
     </div>
 </div>
 
-<!-- Modal para editar perfil -->
-<div class="modal fade" id="editarPerfilModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="editarPerfilForm" method="POST" action="{{ route('perfil.update', $usuario->id) }}">
-                @csrf
-                @method('PUT')
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editarPerfilModalLabel">Editar Perfil</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Descripción -->
-                    <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción</label>
-                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ $usuario->descripcion }}</textarea>
-                    </div>
-                    <!-- Redes Sociales -->
-                    <div class="mb-3">
-                        <label for="redes_sociales" class="form-label">Redes Sociales</label>
-                        <div id="redesSocialesInputs">
-                            @if($usuario->perfil && !empty($usuario->perfil->redes_sociales))
-                                @foreach($usuario->perfil->redes_sociales as $index => $red)
-                                    @if(is_array($red) && isset($red['nombre'], $red['url']))
-                                        <div class="input-group mb-2">
-                                            <input type="text" class="form-control" name="redes[{{ $index }}][nombre]" value="{{ $red['nombre'] }}" placeholder="Nombre de la red social">
-                                            <input type="url" class="form-control" name="redes[{{ $index }}][url]" value="{{ $red['url'] }}" placeholder="URL de la red social">
-                                            <button type="button" class="btn btn-danger eliminar-red" onclick="eliminarRed(this)">Eliminar</button>
-                                        </div>
-                                    @endif
-                                @endforeach
-                            @endif
-                        </div>
-                        <button type="button" class="btn btn-primary mt-2" id="agregarRed">Agregar Red Social</button> 
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-success">Guardar Cambios</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <div class="body">
     <div id="foto_perfil">
-        <img src="{{ $usuario->avatar ? asset($usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}" 
-            alt="{{ $usuario->nombre }}" 
-            class="foto">
+    <img src="{{ $usuario->avatar ? asset('storage/' . $usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}" 
+    alt="{{ $usuario->nombre }}" 
+    class="foto">
         
         <!-- Mostrar el botón de edición solo si el perfil pertenece al usuario autenticado -->
         @if(Auth::id() === $usuario->id)
@@ -124,92 +79,88 @@
             <p id="contenido_biografia" style="white-space: pre-wrap;">{{ $usuario->descripcion ?? 'No hay biografía disponible.' }}</p>
         </div>
 
-        <div id="ultimo_post">
-            <h1>Último Post</h1>
-            @if($ultimoPost)
-                <div class="card" style="width: 50%; margin-bottom: 20px;">
+        <!-- Todos los Posts -->
+        <div id="publicaciones" class="container mt-5">
+            <h1 class="text-center mb-4">Publicaciones</h1>
+            @forelse($publicaciones as $post)
+                <div class="card mx-auto mb-4" style="max-width: 600px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3">
-                            <a href="{{ route('perfil.show', $ultimoPost->usuario->id) }}">
-                                <img src="{{ $ultimoPost->usuario && $ultimoPost->usuario->avatar ? asset($ultimoPost->usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}" 
-                                    style="width: 75px; border-radius: 50%;" 
-                                    alt="Imagen de {{ $ultimoPost->titulo }}">
-                            </a>
-                            <p class="card-text">
-                                {{ $ultimoPost->usuario ? $ultimoPost->usuario->nombre : 'Usuario desconocido' }}
-                            </p>
-                        </div>
-                        <h5 class="card-title">{{ $ultimoPost->titulo }}</h5>
-                        <p class="card-text" style="white-space: pre-wrap;">{{ $ultimoPost->contenido }}</p>
+                        <h5 class="card-title text-primary">{{ $post->titulo }}</h5>
+                        <p class="card-text" style="white-space: pre-wrap;">{{ $post->contenido }}</p>
                     </div>
-                    @if($ultimoPost->imagen)
-                        <img src="{{ $ultimoPost->imagen }}" 
-                            class="card-img-bottom" 
-                            style="max-height: 500px; max-width: 100%; min-height: 200px; min-width: 200px; object-fit: contain;" 
-                            alt="Imagen de {{ $ultimoPost->titulo }}">
+                    @if($post->imagen)
+                        <img src="{{ asset('storage/' . $post->imagen) }}" 
+                            class="card-img-top" 
+                            style="max-height: 400px; object-fit: cover; border-radius: 0 0 10px 10px;" 
+                            alt="Imagen de {{ $post->titulo }}">
                     @endif
-                    <div class="card-footer">
-                        <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
-                        <span>{{ $ultimoPost->comentarios->count() }} Comentarios</span>
-                        <button class="btn btn-link p-0 like-button" data-publicacion-id="{{ $ultimoPost->id }}">
-                            <img src="{{ Auth::user()->likes->contains('publicacion_id', $ultimoPost->id) ? asset('images/LikeDado.png') : asset('images/Like.png') }}" 
-                                style="width: 25px;" 
-                                alt="Me gusta">
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <div>
+                            <button class="btn btn-link p-0 like-button" data-publicacion-id="{{ $post->id }}">
+                                <img src="{{ Auth::user()->likes->contains('publicacion_id', $post->id) ? asset('images/LikeDado.png') : asset('images/Like.png') }}" 
+                                    style="width: 25px;" 
+                                    alt="Me gusta">
+                            </button>
+                            <span class="like-count" data-publicacion-id="{{ $post->id }}">{{ $post->likes->count() }} Me gusta</span>
+                        </div>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#comentariosModal-{{ $post->id }}">
+                            Ver Comentarios
                         </button>
-                        <span class="like-count" data-publicacion-id="{{ $ultimoPost->id }}">{{ $ultimoPost->likes->count() }} Me gusta</span>
                     </div>
                 </div>
-            @else
-                <p>No hay posts disponibles.</p>
-            @endif
+
+                <!-- Modal de comentarios -->
+                <div class="modal fade" id="comentariosModal-{{ $post->id }}" tabindex="-1" aria-labelledby="comentariosModalLabel-{{ $post->id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="comentariosModalLabel-{{ $post->id }}">{{ $post->titulo }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>{{ $post->contenido }}</p>
+                                @if($post->imagen)
+                                    <img src="{{ asset('storage/' . $post->imagen) }}" class="img-fluid" alt="Imagen de {{ $post->titulo }}">
+                                @endif
+                                <hr>
+                                <h5>Comentarios</h5>
+                                <div class="comentarios-list" data-publicacion-id="{{ $post->id }}">
+                                    @foreach($post->comentarios as $comentario)
+                                        <div class="comentario mb-2">
+                                            <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <form class="comentario-form mt-3" data-publicacion-id="{{ $post->id }}">
+                                    @csrf
+                                    <div class="input-group">
+                                        <input type="text" class="form-control comentario-input" placeholder="Escribe un comentario..." required>
+                                        <button class="btn btn-primary" type="submit">Comentar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <p class="text-center">No hay publicaciones disponibles.</p>
+            @endforelse
         </div>
     </div>
 </div>
 
 <script>
     $(document).ready(function () {
-
-        let redIndex = {{ isset($usuario->perfil->redes_sociales) ? count($usuario->perfil->redes_sociales) : 0 }};
-
-        // Agregar un nuevo campo para redes sociales
-        $('#agregarRed').on('click', function () {
-            const nuevaRed = `
-                <div class="input-group mb-2">
-                    <input type="text" class="form-control" name="redes[${redIndex}][nombre]" placeholder="Nombre de la red social">
-                    <input type="url" class="form-control" name="redes[${redIndex}][url]" placeholder="URL de la red social">
-                    <button type="button" class="btn btn-danger eliminar-red" onclick="eliminarRed(this)">Eliminar</button>
-                </div>`;
-            $('#redesSocialesInputs').append(nuevaRed);
-            redIndex++;
-        });
-
-        // Eliminar un campo de red social
-        window.eliminarRed = function (button) {
-            $(button).closest('.input-group').remove();
-        };
-        // Mostrar el overlay de carga
-        function mostrarCargando() {
-            $('#loading-overlay').fadeIn();
-        }
-
-        // Ocultar el overlay de carga
-        function ocultarCargando() {
-            $('#loading-overlay').fadeOut();
-        }
-
-        // Manejar el evento de clic en el botón de seguir o dejar de seguir
-        $('.seguir-button').on('click', function () {
+        // Manejar "Me gusta"
+        $('.like-button').on('click', function () {
             const button = $(this);
-            const usuarioId = button.data('usuario-id');
-            const isFollowing = button.hasClass('btn-danger'); // Si tiene la clase "btn-danger", está siguiendo
+            const publicacionId = button.data('publicacion-id');
+            const likeCountElement = $(`.like-count[data-publicacion-id="${publicacionId}"]`);
+            const likeImage = button.find('img');
 
-            // Determinar la URL para seguir o dejar de seguir
-            const url = isFollowing ? `/dejar-de-seguir/${usuarioId}` : `/seguir/${usuarioId}`;
+            const isLiked = likeImage.attr('src').includes('LikeDado.png');
+            const url = isLiked ? `/unlike/${publicacionId}` : `/like/${publicacionId}`;
 
-            // Mostrar el loader
-            mostrarCargando();
-
-            // Enviar la solicitud AJAX
             $.ajax({
                 url: url,
                 method: 'POST',
@@ -217,20 +168,42 @@
                     _token: '{{ csrf_token() }}'
                 },
                 success: function (response) {
-                    // Actualizar el botón y el contador de seguidores
-                    if (isFollowing) {
-                        button.removeClass('btn-danger').addClass('btn-primary').text('Seguir');
-                    } else {
-                        button.removeClass('btn-primary').addClass('btn-danger').text('Dejar de seguir');
-                    }
-                    $('#seguidores-count').text(response.seguidores_count); // Actualizar el número de seguidores
+                    likeCountElement.text(`${response.like_count} Me gusta`);
+                    likeImage.attr('src', isLiked ? '{{ asset('images/Like.png') }}' : '{{ asset('images/LikeDado.png') }}');
                 },
                 error: function (xhr) {
-                    console.error('Error al seguir o dejar de seguir:', xhr.responseText);
+                    console.error('Error al procesar el like:', xhr.responseText);
+                }
+            });
+        });
+
+        // Manejar comentarios
+        $('.comentario-form').on('submit', function (event) {
+            event.preventDefault();
+
+            const form = $(this);
+            const publicacionId = form.data('publicacion-id');
+            const input = form.find('.comentario-input');
+            const contenido = input.val();
+            const comentariosList = $(`.comentarios-list[data-publicacion-id="${publicacionId}"]`);
+
+            $.ajax({
+                url: `/comentarios/${publicacionId}`,
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    contenido: contenido,
                 },
-                complete: function () {
-                    // Ocultar el loader
-                    ocultarCargando();
+                success: function (response) {
+                    comentariosList.append(`
+                        <div class="comentario mb-2">
+                            <strong>{{ Auth::user()->nombre }}:</strong> ${contenido}
+                        </div>
+                    `);
+                    input.val('');
+                },
+                error: function (xhr) {
+                    console.error('Error al agregar el comentario:', xhr.responseText);
                 }
             });
         });
@@ -238,6 +211,6 @@
 </script>
 
 @include('layouts.footer')
-</body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

@@ -1,58 +1,87 @@
-body{
-    background-color: #838383;
+body {
+    background-color: #f4f4f4; /* Fondo más claro */
     font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
+    overflow-y: hidden; /* Evitar el scroll vertical */
 }
 
-#todo{
+#todo {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Alineación superior */
     flex-direction: row;
-    width: 97vw;
-    gap: 10px;
-}
-
-#opciones{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    width: 33vw;
-    height: 70vh;
+    width: 90%;
+    gap: 20px; /* Más espacio entre columnas */
+    padding: 20px;
 }
 
 #principal {
     display: flex;
-    flex-direction: column; 
-    align-items: center; 
-    width: 100%; 
-    overflow-y: auto; 
-    max-height: 85vh; 
-    padding-top: 0;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
-    border-top: 1px solid black;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    overflow-y: auto;
+    max-height: 85vh;
+    padding: 20px;
+    border: 1px solid #ddd; /* Bordes más suaves */
+    border-radius: 10px; /* Bordes redondeados */
+    background-color: #ffffff; /* Fondo blanco */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
 }
 
 .card {
-    width: 18rem; /* Mantiene el tamaño de las tarjetas */
-    margin-bottom: 10px; /* Espacio entre tarjetas */
+    width: 22rem; /* Tarjetas más anchas */
+    margin-bottom: 15px; /* Más espacio entre tarjetas */
+    border: 1px solid #ccc; /* Bordes más claros */
+    border-radius: 10px; /* Bordes redondeados */
+    background-color: #ffffff; /* Fondo blanco */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animación al pasar el mouse */
 }
 
+.card:hover {
+    transform: translateY(-5px); /* Efecto de elevación */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sombra más fuerte */
+}
 
-#crear{
-    display: flex;
-    justify-content: space-around;
+.card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px 10px 0 0; /* Bordes redondeados solo en la parte superior */
+    object-fit: cover; /* Ajuste de imagen */
+}
+
+.card-body {
+    padding: 15px;
+    text-align: left;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+    white-space: pre-wrap; /* Mantiene los saltos de línea */
+}
+
+.card-footer {
+    padding: 10px 15px;
+    background-color: #f9f9f9; /* Fondo más claro */
+    border-top: 1px solid #ddd;
     align-items: center;
-    flex-direction: column;
-    width: 33vw;
-    height: 70vh;
 }
-html {
-    scroll-behavior: smooth;
+
+.card-footer img {
+    cursor: pointer;
 }
+
 .alert-success {
     position: fixed;
     top: 20px;
@@ -62,20 +91,11 @@ html {
     width: auto;
     max-width: 90%;
     text-align: center;
-}
-#loading-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    z-index: 1050;
-    text-align: center;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-#loading-overlay .spinner-border {
-    width: 3rem;
-    height: 3rem;
-}

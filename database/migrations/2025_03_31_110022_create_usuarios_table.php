@@ -15,7 +15,7 @@ class CreateUsuariosTable extends Migration
             $table->string('password');
             $table->enum('rol', ['admin', 'moderador', 'creador', 'usuario'])->default('usuario');
             $table->timestamps();
-            $table->string('avatar')->default('images/PerfilPredeterminado.jpg');
+            $table->string('avatar');
             $table->text('descripcion')->nullable();
             $table->enum('estado', ['activo', 'inactivo'])->default('activo');
         });
