@@ -54,7 +54,11 @@
 
                         <!-- Lista de comentarios -->
                         <div class="comentarios-list" data-publicacion-id="{{ $post->id }}" style="margin-top: 10px;">
-                            <!-- Los comentarios se cargarán aquí dinámicamente -->
+                            @foreach($post->comentarios as $comentario)
+                                <div class="comentario">
+                                    <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
+                                </div>
+                            @endforeach
                         </div>
                         <button class="btn btn-link p-0 like-button" data-publicacion-id="{{ $post->id }}">
                             <img src="{{ Auth::user()->likes->contains('publicacion_id', $post->id) ? asset('images/LikeDado.png') : asset('images/Like.png') }}" 
