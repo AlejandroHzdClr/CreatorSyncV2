@@ -38,18 +38,22 @@ class PerfilController extends Controller
             'redes.*.url' => 'nullable|url',
         ]);
 
-        // Actualizar la descripción del usuario
-        $usuario->descripcion = $request->descripcion;
-        $usuario->save();
+        // Actualizar la descripción del usuario solo si se envía
+        if ($request->has('descripcion')) {
+            $usuario->descripcion = $request->descripcion;
+            $usuario->save();
+        }
 
         // Actualizar las redes sociales en el perfil
-        if ($usuario->perfil) {
-            $usuario->perfil->redes_sociales = $request->redes; // Guardar directamente como array
-            $usuario->perfil->save();
-        } else {
-            $usuario->perfil()->create([
-                'redes_sociales' => $request->redes,
-            ]);
+        if ($request->has('redes')) {
+            if ($usuario->perfil) {
+                $usuario->perfil->redes_sociales = $request->redes; // Guardar directamente como array
+                $usuario->perfil->save();
+            } else {
+                $usuario->perfil()->create([
+                    'redes_sociales' => $request->redes,
+                ]);
+            }
         }
 
         return redirect()->route('perfil.show', $usuario->id)->with('success', 'Perfil actualizado correctamente.');

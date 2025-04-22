@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Perfil - CreatorSync</title>
+    <title>{{ $usuario->nombre}}</title>
     <link href="{{ asset('css/perfil.css') }}" rel="stylesheet">
     <link href="{{ asset('css/nav.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -149,6 +149,51 @@
     </div>
 </div>
 
+<!-- Modal para editar perfil -->
+<div class="modal fade" id="editarPerfilModal" tabindex="-1" aria-labelledby="editarPerfilModalLabel" aria-hidden="true">
+     <div class="modal-dialog">
+         <div class="modal-content">
+             <form id="editarPerfilForm" method="POST" action="{{ route('perfil.update', $usuario->id) }}">
+                 @csrf
+                 @method('PUT')
+                 <div class="modal-header">
+                     <h5 class="modal-title" id="editarPerfilModalLabel">Editar Perfil</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                 </div>
+                 <div class="modal-body">
+                     <!-- Descripción -->
+                     <div class="mb-3">
+                         <label for="descripcion" class="form-label">Descripción</label>
+                         <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ $usuario->descripcion }}</textarea>
+                     </div>
+                     <!-- Redes Sociales -->
+                     <div class="mb-3">
+                         <label for="redes_sociales" class="form-label">Redes Sociales</label>
+                         <div id="redesSocialesInputs">
+                             @if($usuario->perfil && !empty($usuario->perfil->redes_sociales))
+                                 @foreach($usuario->perfil->redes_sociales as $index => $red)
+                                     @if(is_array($red) && isset($red['nombre'], $red['url']))
+                                         <div class="input-group mb-2">
+                                             <input type="text" class="form-control" name="redes[{{ $index }}][nombre]" value="{{ $red['nombre'] }}" placeholder="Nombre de la red social">
+                                             <input type="url" class="form-control" name="redes[{{ $index }}][url]" value="{{ $red['url'] }}" placeholder="URL de la red social">
+                                             <button type="button" class="btn btn-danger eliminar-red" onclick="eliminarRed(this)">Eliminar</button>
+                                         </div>
+                                     @endif
+                                 @endforeach
+                             @endif
+                         </div>
+                         <button type="button" class="btn btn-primary mt-2" id="agregarRed">Agregar Red Social</button> 
+                     </div>
+                 </div>
+                 <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                     <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                 </div>
+             </form>
+         </div>
+     </div>
+ </div>
+
 <script>
     $(document).ready(function () {
         // Manejar "Seguir" y "Dejar de seguir"
@@ -203,6 +248,9 @@
             const isLiked = likeImage.attr('src').includes('LikeDado.png');
             const url = isLiked ? `/unlike/${publicacionId}` : `/like/${publicacionId}`;
 
+            // Mostrar el overlay de carga
+            $('#loading-overlay').fadeIn();
+
             $.ajax({
                 url: url,
                 method: 'POST',
@@ -215,9 +263,33 @@
                 },
                 error: function (xhr) {
                     console.error('Error al procesar el like:', xhr.responseText);
+                },
+                complete: function () {
+                    // Ocultar el overlay de carga
+                    $('#loading-overlay').fadeOut();
                 }
             });
         });
+
+        // Agregar nueva red social
+        let redIndex = {{ isset($usuario->perfil->redes_sociales) ? count($usuario->perfil->redes_sociales) : 0 }};
+ 
+         // Agregar un nuevo campo para redes sociales
+         $('#agregarRed').on('click', function () {
+             const nuevaRed = `
+                 <div class="input-group mb-2">
+                     <input type="text" class="form-control" name="redes[${redIndex}][nombre]" placeholder="Nombre de la red social">
+                     <input type="url" class="form-control" name="redes[${redIndex}][url]" placeholder="URL de la red social">
+                     <button type="button" class="btn btn-danger eliminar-red" onclick="eliminarRed(this)">Eliminar</button>
+                 </div>`;
+             $('#redesSocialesInputs').append(nuevaRed);
+             redIndex++;
+         });
+ 
+         // Eliminar un campo de red social
+         window.eliminarRed = function (button) {
+             $(button).closest('.input-group').remove();
+         };
 
         // Manejar comentarios
         $('.comentario-form').on('submit', function (event) {
@@ -228,6 +300,9 @@
             const input = form.find('.comentario-input');
             const contenido = input.val();
             const comentariosList = $(`.comentarios-list[data-publicacion-id="${publicacionId}"]`);
+
+            // Mostrar el overlay de carga
+            $('#loading-overlay').fadeIn();
 
             $.ajax({
                 url: `/comentarios/${publicacionId}`,
@@ -246,6 +321,10 @@
                 },
                 error: function (xhr) {
                     console.error('Error al agregar el comentario:', xhr.responseText);
+                },
+                complete: function () {
+                    // Ocultar el overlay de carga
+                    $('#loading-overlay').fadeOut();
                 }
             });
         });

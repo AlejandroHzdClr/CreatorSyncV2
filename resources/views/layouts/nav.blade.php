@@ -14,8 +14,13 @@
         <a href="{{ route('inicio.index') }}">
             <img src="{{ asset('images/CreatorsSyncLogo.png') }}" alt="CreatorsSyncLogo" class="logo" >
         </a>
+        <!-- Buscador -->
+        <form action="{{ route('buscar') }}" method="GET" class="d-flex me-3">
+            <input type="text" name="termino" class="form-control" placeholder="Buscar..." aria-label="Buscar" required>
+            <button type="submit" class="btn btn-primary ms-2">Buscar</button>
+        </form>
         <!-- Iconos de la derecha -->
-        <div class="d-flex align-items-center gap-3 ms-auto">
+        <div class="d-flex align-items-center gap-3">
         <div class="position-relative">
             <a href="{{ route('notificaciones.index') }}">
                 <img src="{{ asset('images/Campana.png') }}" alt="Notificaciones" class="campana cursor-pointer" onclick="">
@@ -36,7 +41,7 @@
                     <a href="{{ route('configuracion.index', Auth::user()->id) }}">Configuración</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit">Cerrar sesión</button>
+                        <button type="submit"><strong>Cerrar sesión</strong></button>
                     </form>
                 </div>
             </div>

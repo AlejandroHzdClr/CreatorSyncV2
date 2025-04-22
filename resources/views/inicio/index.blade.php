@@ -220,17 +220,24 @@
 
     $(document).ready(function () {
         // Manejar "Me gusta" (para la vista principal y el modal)
-        $('.like-button').on('click', function (event) {
+        $(document).on('click', '.like-button', function (event) {
             event.preventDefault();
 
             const button = $(this);
             const publicacionId = button.data('publicacion-id');
             const likeCountElements = $(`.like-count[data-publicacion-id="${publicacionId}"]`);
-            const likeImages = $(`img[src*='Like'][data-publicacion-id="${publicacionId}"]`);
+            const likeImage = button.find('img'); // Busca la imagen dentro del botón
 
-            const isLiked = likeImages.first().attr('src').includes('LikeDado.png');
+            // Verifica si la imagen existe antes de acceder a su atributo src
+            if (!likeImage.length) {
+                console.error('No se encontró la imagen de "Me gusta" para la publicación con ID:', publicacionId);
+                return;
+            }
+
+            const isLiked = likeImage.attr('src').includes('LikeDado.png');
             const url = isLiked ? `/unlike/${publicacionId}` : `/like/${publicacionId}`;
 
+            // Mostrar el overlay de carga
             $('#loading-overlay').fadeIn();
 
             $.ajax({
@@ -242,9 +249,7 @@
                 success: function (response) {
                     const newLikeCount = response.like_count;
                     likeCountElements.text(`${newLikeCount} Me gusta`);
-                    likeImages.each(function() {
-                        $(this).attr('src', isLiked ? '{{ asset('images/Like.png') }}' : '{{ asset('images/LikeDado.png') }}');
-                    });
+                    likeImage.attr('src', isLiked ? '{{ asset('images/Like.png') }}' : '{{ asset('images/LikeDado.png') }}');
                 },
                 error: function (xhr) {
                     console.error('Error al procesar el like:', xhr.responseText);

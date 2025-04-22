@@ -11,6 +11,7 @@ use App\Http\Controllers\SeguidorController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\SearchController;
 
 
 Route::get('/dashboard', function () {
@@ -59,6 +60,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/notificaciones/{id}/eliminar', [NotificacionController::class, 'eliminar'])->name('notificaciones.eliminar');
     Route::delete('/notificaciones', [NotificacionController::class, 'eliminarTodas'])->name('notificaciones.eliminarTodas');
     Route::patch('/notificaciones/marcar-todas-leidas', [NotificacionController::class, 'marcarTodasLeidas'])->name('notificaciones.marcarTodasLeidas');
+
+    // Rutas relacionadas con la búsqueda
+    Route::get('/buscar', [SearchController::class, 'buscar'])->name('buscar');
+    Route::get('/posts/{id}', [PublicacionController::class, 'show'])->name('posts.show');
 });
 
 require __DIR__.'/auth.php';

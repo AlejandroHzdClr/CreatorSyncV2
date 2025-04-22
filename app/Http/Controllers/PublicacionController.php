@@ -48,4 +48,14 @@ class PublicacionController extends Controller {
         // Redirigir a index con un mensaje de éxito
         return redirect()->route('inicio.index')->with('success', 'Publicación subida correctamente');
     }
+
+    // Elegir una publicación
+    public function show($id)
+    {
+        // Buscar la publicación por ID
+        $publicacion = Publicacion::with('usuario')->findOrFail($id);
+
+        // Retornar la vista con los detalles de la publicación
+        return view('posts.show', compact('publicacion'));
+    }
 }
