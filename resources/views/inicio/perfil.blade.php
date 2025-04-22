@@ -151,6 +151,48 @@
 
 <script>
     $(document).ready(function () {
+        // Manejar "Seguir" y "Dejar de seguir"
+        $('.seguir-button').on('click', function () {
+            const button = $(this);
+            const usuarioId = button.data('usuario-id');
+            const esSeguir = button.hasClass('btn-primary'); // Si tiene la clase btn-primary, es "Seguir"
+
+            // URL para seguir o dejar de seguir
+            const url = esSeguir ? `/seguir/${usuarioId}` : `/dejar-de-seguir/${usuarioId}`;
+
+            // Mostrar el overlay de carga
+            $('#loading-overlay').fadeIn();
+
+            // Enviar la solicitud AJAX
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    // Actualizar el botón según la acción realizada
+                    if (esSeguir) {
+                        button.removeClass('btn-primary').addClass('btn-danger').text('Dejar de seguir');
+                    } else {
+                        button.removeClass('btn-danger').addClass('btn-primary').text('Seguir');
+                    }
+
+                    // Actualizar el contador de seguidores si se incluye en la respuesta
+                    if (response.seguidores_count !== undefined) {
+                        $('#seguidores-count').text(response.seguidores_count);
+                    }
+                },
+                error: function (xhr) {
+                    console.error('Error al procesar la solicitud:', xhr.responseText);
+                },
+                complete: function () {
+                    // Ocultar el overlay de carga
+                    $('#loading-overlay').fadeOut();
+                }
+            });
+        });
+        
         // Manejar "Me gusta"
         $('.like-button').on('click', function () {
             const button = $(this);
