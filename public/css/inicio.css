@@ -99,3 +99,71 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Estilos adicionales para el modal de subir */
+#subirModal .modal-header {
+    background-color: #007bff;
+    color: white;
+    border-bottom: 1px solid #dee2e6;
+}
+
+#subirModal .modal-title {
+    font-weight: bold;
+}
+
+#subirModal .modal-body label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+#subirModal .modal-body .form-control {
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#subirModal .modal-body .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+#subirModal .modal-body input[type="file"] {
+    padding: 0.5rem;
+}
+
+#subirModal .modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#subirModal .modal-footer .btn-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+}
+
+#subirModal .modal-footer .btn-success:hover {
+    background-color: #218838;
+}
+
+#subirModal .modal-footer .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1.5rem;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+#subirModal .modal-footer .btn-secondary:hover {
+    background-color: #5a6268;
+}

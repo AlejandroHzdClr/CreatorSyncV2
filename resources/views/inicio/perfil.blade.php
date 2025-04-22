@@ -80,7 +80,7 @@
         </div>
 
         <!-- Todos los Posts -->
-        <div id="publicaciones" class="container mt-5">
+        <div id="publicaciones" class="container mt-5" style="margin-bottom:10%;">
             <h1 class="text-center mb-4">Publicaciones</h1>
             @forelse($publicaciones as $post)
                 <div class="card mx-auto mb-4" style="max-width: 600px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
