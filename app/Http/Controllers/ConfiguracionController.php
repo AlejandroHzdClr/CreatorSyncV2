@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Notificacion;
+use App\Models\ConfNotificacion;
 
 
 class ConfiguracionController extends Controller
@@ -85,11 +86,16 @@ class ConfiguracionController extends Controller
     {
         $usuario = Auth::user();
 
-        // Aquí puedes guardar las preferencias de notificaciones en la base de datos
-        // Por ejemplo:
-        // $usuario->notificaciones = json_encode($request->all());
-        // $usuario->save();
+        // Actualizar o crear la configuración de notificaciones
+        $usuario->confNotificacion()->updateOrCreate(
+            ['user_id' => $usuario->id],
+            [
+                'likes' => $request->has('likes'),
+                'seguidores' => $request->has('seguidores'),
+                'comentarios' => $request->has('comentarios'),
+            ]
+        );
 
-        return response()->json(['success' => 'Preferencias de notificaciones actualizadas.']);
+        return redirect()->back()->with('success', 'Configuración de notificaciones actualizada.');
     }
 }

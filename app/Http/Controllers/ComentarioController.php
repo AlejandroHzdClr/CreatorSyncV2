@@ -22,12 +22,17 @@ class ComentarioController extends Controller
             'contenido' => $request->contenido,
         ]);
 
-        // Crear la notificación
+        // Crear la notificación solo si el usuario tiene habilitados los comentarios
         $publicacion = Publicacion::findOrFail($id);
-        Notificacion::create([
-            'usuario_id' => $publicacion->usuario_id,
-            'mensaje' => auth()->user()->nombre . " comentó en tu publicación: {$publicacion->titulo}",
-        ]);
+        $configNotificacion = $publicacion->usuario->confNotificacion;
+
+        if ($configNotificacion && $configNotificacion->comentarios) {
+            Notificacion::create([
+                'usuario_id' => $publicacion->usuario_id,
+                'mensaje' => auth()->user()->nombre . " comentó en tu publicación: {$publicacion->titulo}",
+                'tipo' => Notificacion::TIPO_COMENTARIO,
+            ]);
+        }
 
         return response()->json($comentario);
     }

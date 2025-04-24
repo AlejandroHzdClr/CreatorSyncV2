@@ -16,12 +16,17 @@ class SeguidorController extends Controller
         if (!$usuario->siguiendo->contains('seguido_id', $id)) {
             $usuario->siguiendo()->create(['seguido_id' => $id]);
 
-            // Crear la notificación
+            // Crear la notificación solo si el usuario tiene habilitados los seguidores
             $seguido = Usuario::findOrFail($id);
-            Notificacion::create([
-                'usuario_id' => $id,
-                'mensaje' => "{$usuario->nombre} comenzó a seguirte.",
-            ]);
+            $configNotificacion = $seguido->confNotificacion;
+
+            if ($configNotificacion && $configNotificacion->seguidores) {
+                Notificacion::create([
+                    'usuario_id' => $id,
+                    'mensaje' => "{$usuario->nombre} comenzó a seguirte.",
+                    'tipo' => Notificacion::TIPO_SEGUIDOR,
+                ]);
+            }
         }
 
         $seguidoresCount = Usuario::find($id)->seguidores->count();

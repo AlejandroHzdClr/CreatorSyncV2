@@ -12,8 +12,10 @@ class CreateNotificacionesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('usuario_id');
             $table->text('mensaje');
-            $table->timestamps();
             $table->boolean('leida')->default(false);
+            $table->unsignedTinyInteger('tipo')->default(1); // 1: Like, 2: Comentario, 3: Seguidor
+            $table->timestamps();
+            
             
             $table->foreign('usuario_id')->references('id')->on('usuarios')->onDelete('cascade');
         });

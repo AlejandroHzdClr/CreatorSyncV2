@@ -61,4 +61,10 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(Like::class, 'usuario_id');
     }
+
+    // Relación con comentarios (uno a muchos)
+    public function confNotificacion()
+    {
+        return $this->hasOne(ConfNotificacion::class, 'user_id');
+    }
 }
