@@ -19,59 +19,61 @@
 <div id="todo">
     <div id="principal">
         @foreach($publicaciones as $post)
-            <div class="card post-card" style="width: 50%; margin-bottom: 20px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#postModal{{ $post->id }}">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-3">
-                        <a href="{{ route('perfil.show', $post->usuario->id) }}">
-                            <img src="{{ $post->usuario && $post->usuario->avatar ? asset('storage/' . $post->usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}"
-                                 style="width: 75px; border-radius: 50%;"
-                                 alt="Imagen de perfil">
-                        </a>
-                        <p class="card-text">
-                            {{ $post->usuario ? $post->usuario->nombre : 'Usuario desconocido' }}
-                        </p>
-                    </div>
-                    <h5 class="card-title">{{ $post->titulo }}</h5>
-                    <p class="card-text" style="white-space: pre-wrap; overflow: hidden; max-height: 100px;">{{ Str::limit($post->contenido, 150) }}</p>
-                </div>
-                @if($post->imagen)
+        <div class="card post-card" style="width: 50%; margin-bottom: 20px;">
+            <div class="d-flex justify-content-between mb-3" style="padding: 1rem; cursor: default;">
+                <a href="{{ route('perfil.show', $post->usuario->id) }}">
+                    <img src="{{ $post->usuario && $post->usuario->avatar ? asset('storage/' . $post->usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}"
+                        style="width: 75px; border-radius: 50%;"
+                        alt="Imagen de perfil">
+                </a>
+                <p class="card-text">
+                    {{ $post->usuario ? $post->usuario->nombre : 'Usuario desconocido' }}
+                </p>
+            </div>
+            <div class="card-body" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#postModal{{ $post->id }}">
+                <h5 class="card-title">{{ $post->titulo }}</h5>
+                <p class="card-text" style="white-space: pre-wrap; overflow: hidden; max-height: 100px;">{{ Str::limit($post->contenido, 150) }}</p>
+            </div>
+            @if($post->imagen)
+                <div style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#postModal{{ $post->id }}">
                     <img src="{{ asset('storage/' . $post->imagen) }}"
-                         class="card-img-bottom"
-                         style="max-height: 300px; max-width: 100%; min-height: 100px; min-width: 100px; object-fit: contain;"
-                         alt="Imagen de {{ $post->titulo }}">
-                @endif
-                <div class="card-footer">
-                    <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
-                    <span class="ms-2">{{ $post->comentarios->count() }}</span>
-                    <button class="btn btn-link p-0 like-button" data-publicacion-id="{{ $post->id }}">
-                        <img src="{{ Auth::user()->likes->contains('publicacion_id', $post->id) ? asset('images/LikeDado.png') : asset('images/Like.png') }}"
-                             style="width: 25px;"
-                             alt="Me gusta">
-                    </button>
-                    <span class="like-count" data-publicacion-id="{{ $post->id }}">{{ $post->likes->count() }} Me gusta</span>
+                        class="card-img-bottom"
+                        style="max-height: 300px; max-width: 100%; min-height: 100px; min-width: 100px; object-fit: contain;"
+                        alt="Imagen de {{ $post->titulo }}">
+                </div>
+            @endif
+            <div class="card-footer">
+                <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
+                <span class="ms-2">{{ $post->comentarios->count() }}</span>
+                <button class="btn btn-link p-0 like-button" data-publicacion-id="{{ $post->id }}">
+                    <img src="{{ Auth::user()->likes->contains('publicacion_id', $post->id) ? asset('images/LikeDado.png') : asset('images/Like.png') }}"
+                        style="width: 25px;"
+                        alt="Me gusta">
+                </button>
+                <span class="like-count" data-publicacion-id="{{ $post->id }}">{{ $post->likes->count() }} Me gusta</span>
 
-                    <form class="comentario-form" data-publicacion-id="{{ $post->id }}" style="margin-top: 10px;">
-                        @csrf
-                        <div class="input-group">
-                            <input type="text" class="form-control comentario-input" placeholder="Escribe un comentario..." required>
-                            <button class="btn btn-primary" type="submit">Comentar</button>
-                        </div>
-                    </form>
-
-                    <div class="comentarios-list" data-publicacion-id="{{ $post->id }}" style="margin-top: 10px;">
-                        @if($post->comentarios->count() > 0)
-                            @foreach($post->comentarios->take(3) as $comentario)
-                                <div class="comentario">
-                                    <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
-                                </div>
-                            @endforeach
-                            @if($post->comentarios->count() > 3)
-                                <div class="ver-mas-comentarios" style="cursor: pointer; color: blue; margin-top: 5px;">Ver más comentarios...</div>
-                            @endif
-                        @endif
+                <form class="comentario-form" data-publicacion-id="{{ $post->id }}" style="margin-top: 10px;">
+                    @csrf
+                    <div class="input-group">
+                        <input type="text" class="form-control comentario-input" placeholder="Escribe un comentario..." required>
+                        <button class="btn btn-primary" type="submit">Comentar</button>
                     </div>
+                </form>
+
+                <div class="comentarios-list" data-publicacion-id="{{ $post->id }}" style="margin-top: 10px;">
+                    @if($post->comentarios->count() > 0)
+                        @foreach($post->comentarios->take(3) as $comentario)
+                            <div class="comentario">
+                                <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
+                            </div>
+                        @endforeach
+                        @if($post->comentarios->count() > 3)
+                            <div class="ver-mas-comentarios" style="cursor: pointer; color: blue; margin-top: 5px;">Ver más comentarios...</div>
+                        @endif
+                    @endif
                 </div>
             </div>
+        </div>
 
             <div class="modal fade" id="postModal{{ $post->id }}" tabindex="-1" aria-labelledby="postModalLabel{{ $post->id }}" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -190,34 +192,6 @@
 @include('layouts.footer')
 
 <script>
-    // Previsualización de la imagen seleccionada
-    function previewImage(event) {
-        const imagePreview = document.getElementById('image-preview');
-        const previewContainer = document.getElementById('image-preview-container');
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                imagePreview.src = e.target.result;
-                previewContainer.style.display = 'block'; // Mostrar el contenedor
-            };
-            reader.readAsDataURL(file);
-        } else {
-            imagePreview.src = '#'; // Limpiar la vista previa
-            previewContainer.style.display = 'none'; // Ocultar el contenedor si no hay imagen
-        }
-    }
-
-    // Ocultar el mensaje de éxito después de 3 segundos
-    setTimeout(() => {
-        const successMessage = document.getElementById('success-message');
-        if (successMessage) {
-            successMessage.style.transition = 'opacity 0.5s';
-            successMessage.style.opacity = '0';
-            setTimeout(() => successMessage.remove(), 500);
-        }
-    }, 3000);
-
     $(document).ready(function () {
         // Manejar "Me gusta" (para la vista principal y el modal)
         $(document).on('click', '.like-button', function (event) {
@@ -393,11 +367,13 @@
             $(this).remove();
         });
 
-        // Al abrir el modal, asegurar que todos los comentarios estén visibles
-        $('.post-card').on('click', function() {
-            const publicacionId = $(this).data('bs-target').replace('#postModal', '');
-            const comentariosListModal = $(`.comentarios-list-modal[data-publicacion-id="${publicacionId}"]`);
-            comentariosListModal.find('.comentario').show();
+        // Solución para el problema de aria-hidden
+        $('.modal').on('shown.bs.modal', function () {
+            $(this).attr('aria-hidden', 'false'); // Asegúrate de que aria-hidden sea false al abrir el modal
+        });
+
+        $('.modal').on('hidden.bs.modal', function () {
+            $(this).attr('aria-hidden', 'true'); // Restablece aria-hidden a true al cerrar el modal
         });
     });
 </script>

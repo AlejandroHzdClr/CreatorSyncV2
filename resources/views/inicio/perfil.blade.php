@@ -30,13 +30,17 @@
         
         <!-- Mostrar el botón de edición solo si el perfil pertenece al usuario autenticado -->
         @if(Auth::id() === $usuario->id)
-        <div id="edicion">
-            <img src="{{ asset('images/editar.png') }}" alt="Editar" class="editar">
-            <h2>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editarPerfilModal">
-                    Editar tu Perfil
-                </button>
-            </h2>
+        <div id="edicion" class="d-flex align-items-center mt-3" 
+            data-bs-toggle="modal" 
+            data-bs-target="#editarPerfilModal"
+            style="cursor: pointer;">
+            <img src="{{ asset('images/editar.png') }}" 
+                alt="Editar" 
+                class="editar me-2"
+                style="cursor: pointer; width: 30px; height: 30px;">
+            <span style="font-size: 1.2rem; font-weight: bold; cursor: pointer;">
+                Editar Perfil
+            </span>
         </div>
         @endif
     </div>

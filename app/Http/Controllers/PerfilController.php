@@ -35,7 +35,7 @@ class PerfilController extends Controller
             'descripcion' => 'nullable|string|max:2500',
             'redes' => 'nullable|array',
             'redes.*.nombre' => 'required|string|max:50',
-            'redes.*.url' => 'nullable|url',
+            'redes.*.url' => 'nullable|string|max:255',        
         ]);
 
         // Actualizar la descripción del usuario solo si se envía
