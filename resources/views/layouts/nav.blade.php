@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CreatorSync</title>
     <link href="{{ asset('css/nav.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body class="bg-light">
 
@@ -31,14 +33,27 @@
         </div>
 
             <!-- Menú desplegable personalizado -->
-            <div class="dropdown">
+            <div class="dropdown d-flex align-items-center">
+                <!-- Avatar del usuario -->
                 <img src="{{ Auth::user() && Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('images/PerfilPredeterminado.jpg') }}" 
                     alt="Perfil" 
                     class="foto_perfil" 
                     style="width: 75px; border-radius: 50%;">
+
+                <!-- Indicador de rol de admin -->
+                @if(Auth::user() && Auth::user()->rol === 'admin')
+                    <span class="badge bg-danger ms-2">Admin</span>
+                @endif
+
                 <div class="dropdown-menu">
                     <a href="{{ route('perfil.show', Auth::user()->id) }}">Perfil</a>
                     <a href="{{ route('configuracion.index', Auth::user()->id) }}">Configuración</a>
+
+                    <!-- Opción para el panel de administración -->
+                    @if(Auth::user() && Auth::user()->rol === 'admin')
+                        <a href="{{ route('admin.index') }}">Panel de Administración</a>
+                    @endif
+
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"><strong>Cerrar sesión</strong></button>
@@ -46,5 +61,20 @@
                 </div>
             </div>
     </nav>
+
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

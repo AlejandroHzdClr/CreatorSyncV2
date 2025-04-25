@@ -83,6 +83,29 @@
             <p id="contenido_biografia" style="white-space: pre-wrap;">{{ $usuario->descripcion ?? 'No hay biografía disponible.' }}</p>
         </div>
 
+        <!-- Modal de Confirmación -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form id="deleteForm" method="POST" class="d-inline-block">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Todos los Posts -->
         <div id="publicaciones" class="container mt-5" style="margin-bottom:10%;">
             <h1 class="text-center mb-4">Publicaciones</h1>
@@ -99,6 +122,9 @@
                             alt="Imagen de {{ $post->titulo }}">
                     @endif
                     <div class="card-footer d-flex justify-content-between align-items-center">
+                    @if(Auth::user()->rol === 'admin')
+                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('admin.publicaciones.eliminar', $post->id) }}')">Eliminar Publicación</button>
+                    @endif
                         <div>
                             <button class="btn btn-link p-0 like-button" data-publicacion-id="{{ $post->id }}">
                                 <img src="{{ Auth::user()->likes->contains('publicacion_id', $post->id) ? asset('images/LikeDado.png') : asset('images/Like.png') }}" 
@@ -133,6 +159,9 @@
                                         <div class="comentario mb-2">
                                             <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
                                         </div>
+                                        @if(Auth::user()->rol === 'admin')
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('admin.comentarios.eliminar', $comentario->id) }}')">Eliminar</button>
+                                        @endif
                                     @endforeach
                                 </div>
                                 <form class="comentario-form mt-3" data-publicacion-id="{{ $post->id }}">
@@ -199,6 +228,13 @@
  </div>
 
 <script>
+    function confirmDelete(actionUrl) {
+        const deleteForm = document.getElementById('deleteForm');
+        deleteForm.action = actionUrl; // Establece la URL de acción del formulario
+        const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        confirmModal.show(); // Muestra el modal
+    }
+
     $(document).ready(function () {
         // Manejar "Seguir" y "Dejar de seguir"
         $('.seguir-button').on('click', function () {

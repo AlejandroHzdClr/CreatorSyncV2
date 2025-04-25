@@ -12,6 +12,7 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\AdminController;
 
 
 Route::get('/dashboard', function () {
@@ -64,6 +65,15 @@ Route::middleware('auth')->group(function () {
     // Rutas relacionadas con la búsqueda
     Route::get('/buscar', [SearchController::class, 'buscar'])->name('buscar');
     Route::get('/posts/{id}', [PublicacionController::class, 'show'])->name('posts.show');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+    Route::delete('/admin/usuarios/{id}', [AdminController::class, 'eliminarUsuario'])->name('admin.usuarios.eliminar');
+    Route::delete('/admin/publicaciones/{id}', [AdminController::class, 'eliminarPublicacion'])->name('admin.publicaciones.eliminar');
+    Route::delete('/admin/comentarios/{id}', [AdminController::class, 'eliminarComentario'])->name('admin.comentarios.eliminar');
+    Route::get('/admin/usuarios/{id}/editar', [AdminController::class, 'editarUsuario'])->name('admin.usuarios.editar');
+    Route::put('/admin/usuarios/{id}', [AdminController::class, 'actualizarUsuario'])->name('admin.usuarios.actualizar');
 });
 
 require __DIR__.'/auth.php';

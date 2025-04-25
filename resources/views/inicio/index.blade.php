@@ -10,12 +10,6 @@
 </head>
 <body>
 @include('layouts.nav')
-
-@if(session('success'))
-    <div id="success-message" class="alert alert-success" role="alert">
-        {{ session('success') }}
-    </div>
-@endif
 <div id="todo">
     <div id="principal">
         @foreach($publicaciones as $post)
@@ -52,6 +46,11 @@
                 </button>
                 <span class="like-count" data-publicacion-id="{{ $post->id }}">{{ $post->likes->count() }} Me gusta</span>
 
+                <!-- Botón para eliminar publicación (solo para administradores) -->
+                @if(Auth::user()->rol === 'admin')
+                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('admin.publicaciones.eliminar', $post->id) }}')">Eliminar Publicación</button>
+                @endif
+
                 <form class="comentario-form" data-publicacion-id="{{ $post->id }}" style="margin-top: 10px;">
                     @csrf
                     <div class="input-group">
@@ -65,6 +64,11 @@
                         @foreach($post->comentarios->take(3) as $comentario)
                             <div class="comentario">
                                 <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
+
+                                <!-- Botón para eliminar comentario (solo para administradores) -->
+                                @if(Auth::user()->rol === 'admin')
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('admin.comentarios.eliminar', $comentario->id) }}')">X</button>
+                                @endif
                             </div>
                         @endforeach
                         @if($post->comentarios->count() > 3)
@@ -154,6 +158,30 @@
     </div>
 </div>
 
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="POST" class="d-inline-block">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear nueva publicación -->
 <div class="modal fade" id="subirModal" tabindex="-1" aria-labelledby="subirModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -233,6 +261,19 @@
                 }
             });
         });
+
+
+
+
+        // Quitar el mensaje de success después de 3 segundos
+        setTimeout(() => {
+            const successMessage = document.getElementById('success-message');
+            if (successMessage) {
+                successMessage.style.transition = 'opacity 0.5s';
+                successMessage.style.opacity = '0';
+                setTimeout(() => successMessage.remove(), 500);
+            }
+        }, 3000);
 
         // Manejar comentarios (para el formulario FUERA del modal)
         $('.comentario-form').on('submit', function (event) {
@@ -376,6 +417,14 @@
             $(this).attr('aria-hidden', 'true'); // Restablece aria-hidden a true al cerrar el modal
         });
     });
+
+    function confirmDelete(actionUrl) {
+        const deleteForm = document.getElementById('deleteForm');
+        deleteForm.action = actionUrl; // Establece la URL de acción del formulario
+        const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+        confirmModal.show(); // Muestra el modal
+    }
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
