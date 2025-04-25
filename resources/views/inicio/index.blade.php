@@ -50,7 +50,7 @@
                         <span class="like-count" data-publicacion-id="{{ $post->id }}">{{ $post->likes->count() }} Me gusta</span>
                     </div>
                     <!-- Botón para eliminar publicación (solo para administradores) -->
-                    @if(Auth::user()->rol === 'admin')
+                    @if(Auth::id() === $post->usuario_id || Auth::user()->rol === 'admin')
                     <button class="bin-button" onclick="confirmDelete('{{ route('admin.publicaciones.eliminar', $post->id) }}')">
                         <svg
                             class="bin-top"
@@ -108,7 +108,7 @@
                                 <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
 
                                 <!-- Botón para eliminar comentario (solo para administradores) -->
-                                @if(Auth::user()->rol === 'admin')
+                                @if(Auth::id() === $post->usuario_id || Auth::user()->rol === 'admin')
                                     <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('admin.comentarios.eliminar', $comentario->id) }}')">X</button>
                                 @endif
                             </div>
