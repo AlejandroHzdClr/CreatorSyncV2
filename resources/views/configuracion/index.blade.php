@@ -89,15 +89,18 @@
                     <form action="{{ route('configuracion.updateNotificaciones') }}" method="POST">
                         @csrf
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="notiLikes" name="likes" {{ Auth::user()->likes ? 'checked' : '' }}>
+                            <input class="form-check-input" type="checkbox" id="notiLikes" name="likes" 
+                                {{ Auth::user()->confNotificacion->likes ? 'checked' : '' }}>
                             <label class="form-check-label" for="notiLikes">Likes</label>
                         </div>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="notiSeguidores" name="seguidores" {{ Auth::user()->seguidores ? 'checked' : '' }}>
+                            <input class="form-check-input" type="checkbox" id="notiSeguidores" name="seguidores" 
+                                {{ Auth::user()->confNotificacion->seguidores ? 'checked' : '' }}>
                             <label class="form-check-label" for="notiSeguidores">Seguidores</label>
                         </div>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="notiComentarios" name="comentarios" {{ Auth::user()->comentarios ? 'checked' : '' }}>
+                            <input class="form-check-input" type="checkbox" id="notiComentarios" name="comentarios" 
+                                {{ Auth::user()->confNotificacion->comentarios ? 'checked' : '' }}>
                             <label class="form-check-label" for="notiComentarios">Comentarios</label>
                         </div>
                         <button type="submit" class="btn btn-primary mt-3">Guardar</button>
