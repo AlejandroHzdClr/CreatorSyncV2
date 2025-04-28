@@ -34,7 +34,10 @@ class ComentarioController extends Controller
             ]);
         }
 
-        return response()->json($comentario);
+        return response()->json([
+            'contenido' => $comentario->contenido,
+            'usuario_nombre' => auth()->user()->nombre, // Incluye el nombre del usuario autenticado
+        ]);
     }
 
     public function index($id)
@@ -42,18 +45,5 @@ class ComentarioController extends Controller
         $comentarios = Comentario::where('publicacion_id', $id)->with('usuario')->get();
 
         return response()->json($comentarios);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'contenido' => 'required|string|max:500',
-        ]);
-
-        $comentario = Comentario::findOrFail($id);
-        $comentario->contenido = $request->contenido;
-        $comentario->save();
-
-        return response()->json($comentario);
     }
 }

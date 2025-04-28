@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,16 +11,21 @@ class Seguidor extends Model
 
     protected $table = 'seguidores';
 
-    protected $fillable = ['usuario_id', 'seguido_id'];
+    protected $fillable = [
+        'usuario_id',
+        'seguido_id',
+        'fecha',
+    ];
 
-    // Relación con el modelo Usuario
+    // Relación con el usuario que sigue
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'usuario_id');
+        return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 
+    // Relación con el usuario seguido
     public function seguido()
     {
-        return $this->belongsTo(User::class, 'seguido_id');
+        return $this->belongsTo(Usuario::class, 'seguido_id');
     }
 }

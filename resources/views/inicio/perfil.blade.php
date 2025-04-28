@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $usuario->nombre}}</title>
     <link href="{{ asset('css/perfil.css') }}" rel="stylesheet">
     <link href="{{ asset('css/nav.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('js/post.js') }}"></script>
 </head>
 <body>
 @include('layouts.nav')
@@ -107,77 +109,11 @@
         </div>
 
         <!-- Todos los Posts -->
-        <div id="publicaciones" class="container mt-5" style="margin-bottom:10%;">
+        <div id="publicaciones" class="container" style="display: flex; flex-direction: column; align-items: center; margin-bottom:7%">
             <h1 class="text-center mb-4">Publicaciones</h1>
-            @forelse($publicaciones as $post)
-                <div class="card mx-auto mb-4" style="max-width: 600px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                    <div class="card-body">
-                        <h5 class="card-title text-primary">{{ $post->titulo }}</h5>
-                        <p class="card-text" style="white-space: pre-wrap;">{{ $post->contenido }}</p>
-                    </div>
-                    @if($post->imagen)
-                        <img src="{{ asset('storage/' . $post->imagen) }}" 
-                            class="card-img-top" 
-                            style="max-height: 400px; object-fit: cover; border-radius: 0 0 10px 10px;" 
-                            alt="Imagen de {{ $post->titulo }}">
-                    @endif
-                    <div class="card-footer d-flex justify-content-between align-items-center">
-                    @if(Auth::user()->rol === 'admin')
-                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('admin.publicaciones.eliminar', $post->id) }}')">Eliminar Publicación</button>
-                    @endif
-                        <div>
-                            <button class="btn btn-link p-0 like-button" data-publicacion-id="{{ $post->id }}">
-                                <img src="{{ Auth::user()->likes->contains('publicacion_id', $post->id) ? asset('images/LikeDado.png') : asset('images/Like.png') }}" 
-                                    style="width: 25px;" 
-                                    alt="Me gusta">
-                            </button>
-                            <span class="like-count" data-publicacion-id="{{ $post->id }}">{{ $post->likes->count() }} Me gusta</span>
-                        </div>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#comentariosModal-{{ $post->id }}">
-                            Ver Comentarios
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Modal de comentarios -->
-                <div class="modal fade" id="comentariosModal-{{ $post->id }}" tabindex="-1" aria-labelledby="comentariosModalLabel-{{ $post->id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="comentariosModalLabel-{{ $post->id }}">{{ $post->titulo }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p style="white-space: pre-wrap;">{{ $post->contenido }}</p>
-                                @if($post->imagen)
-                                    <img src="{{ asset('storage/' . $post->imagen) }}" class="img-fluid" alt="Imagen de {{ $post->titulo }}">
-                                @endif
-                                <hr>
-                                <h5>Comentarios</h5>
-                                <div class="comentarios-list" data-publicacion-id="{{ $post->id }}">
-                                    @foreach($post->comentarios as $comentario)
-                                        <div class="comentario mb-2">
-                                            <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
-                                        </div>
-                                        @if(Auth::user()->rol === 'admin')
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('admin.comentarios.eliminar', $comentario->id) }}')">Eliminar</button>
-                                        @endif
-                                    @endforeach
-                                </div>
-                                <form class="comentario-form mt-3" data-publicacion-id="{{ $post->id }}">
-                                    @csrf
-                                    <div class="input-group">
-                                        <input type="text" class="form-control comentario-input" placeholder="Escribe un comentario..." required>
-                                        <button class="btn btn-primary" type="submit">Comentar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <p class="text-center">No hay publicaciones disponibles.</p>
-            @endforelse
+            @foreach($publicaciones as $post)
+            <x-post :post="$post" />
+            @endforeach
         </div>
     </div>
 </div>

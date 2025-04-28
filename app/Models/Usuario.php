@@ -41,13 +41,13 @@ class Usuario extends Authenticatable
     // Relación con la tabla seguidores (uno a muchos)
     public function seguidores()
     {
-        return $this->hasMany(Seguidores::class, 'seguido_id');
+        return $this->hasMany(Seguidor::class, 'seguido_id');
     }
 
     // Relación con los usuarios que sigue (uno a muchos inverso)
     public function siguiendo()
     {
-        return $this->hasMany(Seguidores::class, 'usuario_id');
+        return $this->hasMany(Seguidor::class, 'usuario_id');
     }
 
     // Relación con publicaciones (uno a muchos)
