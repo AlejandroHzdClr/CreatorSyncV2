@@ -11,8 +11,8 @@ class CreatePublicacionesTable extends Migration
         Schema::create('publicaciones', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('usuario_id');
-            $table->string('titulo', 255);
-            $table->text('contenido');
+            $table->string('titulo', 255)->nullable();
+            $table->text('contenido')->nullable();
             $table->string('imagen', 255)->nullable();
             $table->enum('estado', ['activo', 'inactivo'])->default('activo');
             $table->timestamps();

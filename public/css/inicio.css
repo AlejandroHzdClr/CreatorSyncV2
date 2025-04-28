@@ -37,12 +37,6 @@ body {
     border-radius: 10px; /* Bordes redondeados */
     background-color: #ffffff; /* Fondo blanco */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra ligera */
-    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animación al pasar el mouse */
-}
-
-.card:hover {
-    transform: translateY(-5px); /* Efecto de elevación */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sombra más fuerte */
 }
 
 .card img {
@@ -186,22 +180,25 @@ body {
     cursor: pointer;
     border: 3px solid rgb(255, 201, 201);
     transition-duration: 0.3s;
-  }
-  .bin-bottom {
+}
+.bin-bottom {
     width: 15px;
-  }
-  .bin-top {
+}
+.bin-top {
     width: 17px;
     transform-origin: right;
     transition-duration: 0.3s;
-  }
-  .bin-button:hover .bin-top {
+}
+.bin-button:hover .bin-top {
     transform: rotate(45deg);
-  }
-  .bin-button:hover {
+}
+.bin-button:hover {
     background-color: rgb(255, 0, 0);
-  }
-  .bin-button:active {
+}
+.bin-button:active {
     transform: scale(0.9);
-  }
+}
   
+.custom-dropdown {
+    z-index: 10 !important;
+}

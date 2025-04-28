@@ -90,12 +90,12 @@ class ConfiguracionController extends Controller
         $usuario->confNotificacion()->updateOrCreate(
             ['user_id' => $usuario->id],
             [
-                'likes' => $request->has('likes'),
-                'seguidores' => $request->has('seguidores'),
-                'comentarios' => $request->has('comentarios'),
+                'likes' => $request->input('likes', false),
+                'seguidores' => $request->input('seguidores', false),
+                'comentarios' => $request->input('comentarios', false),
             ]
         );
 
-        return redirect()->back()->with('success', 'Configuración de notificaciones actualizada.');
+        return redirect('/')->with('success', 'Configuración de notificaciones actualizada correctamente.');
     }
 }

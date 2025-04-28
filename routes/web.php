@@ -20,60 +20,62 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('inicio.index');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', [PublicacionController::class, 'index'])->name('inicio.index');
+    Route::get    ('/', [PublicacionController::class, 'index'])->name('inicio.index');
 
 
     // Rutas relacionadas con el perfil
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get    ('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch  ('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete ('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Rutas relacionadas con publicaciones
-    Route::get('/inicio', [PublicacionController::class, 'index'])->name('inicio.index');
-    Route::post('/inicio', [PublicacionController::class, 'store'])->name('inicio.store');
+    Route::get    ('/inicio', [PublicacionController::class, 'index'])->name('inicio.index');
+    Route::post   ('/inicio', [PublicacionController::class, 'store'])->name('inicio.store');
 
     // Rutas relacionadas con el registro y login
-    Route::get('/perfil/{id}', [PerfilController::class, 'show'])->name('perfil.show');
-    Route::put('/perfil/{id}', [PerfilController::class, 'update'])->name('perfil.update');
-    Route::post('/perfil/{id}/follow', [PerfilController::class, 'follow'])->name('perfil.follow');
+    Route::get    ('/perfil/{id}', [PerfilController::class, 'show'])->name('perfil.show');
+    Route::put    ('/perfil/{id}', [PerfilController::class, 'update'])->name('perfil.update');
+    Route::post   ('/perfil/{id}/follow', [PerfilController::class, 'follow'])->name('perfil.follow');
 
     // Rutas relacionadas con la configuración
-    Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');
-    Route::post('/configuracion/perfil', [ConfiguracionController::class, 'updatePerfil'])->name('configuracion.updatePerfil');
-    Route::post('/configuracion/seguridad', [ConfiguracionController::class, 'updateSeguridad'])->name('configuracion.updateSeguridad');
-    Route::post('/configuracion/notificaciones', [ConfiguracionController::class, 'updateNotificaciones'])->name('configuracion.updateNotificaciones');
+    Route::get    ('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');
+    Route::post   ('/configuracion/perfil', [ConfiguracionController::class, 'updatePerfil'])->name('configuracion.updatePerfil');
+    Route::post   ('/configuracion/seguridad', [ConfiguracionController::class, 'updateSeguridad'])->name('configuracion.updateSeguridad');
+    Route::post   ('/configuracion/notificaciones', [ConfiguracionController::class, 'updateNotificaciones'])->name('configuracion.updateNotificaciones');
     
     // Rutas relacionadas con seguidores
-    Route::post('/seguir/{id}', [SeguidorController::class, 'seguir'])->name('seguir');
-    Route::post('/dejar-de-seguir/{id}', [SeguidorController::class, 'dejarDeSeguir'])->name('dejarDeSeguir');
+    Route::post   ('/seguir/{id}', [SeguidorController::class, 'seguir'])->name('seguir');
+    Route::post   ('/dejar-de-seguir/{id}', [SeguidorController::class, 'dejarDeSeguir'])->name('dejarDeSeguir');
 
     // Rutas relacionadas con likes
-    Route::post('/like/{id}', [LikeController::class, 'like'])->name('like');
-    Route::post('/unlike/{id}', [LikeController::class, 'unlike'])->name('unlike');
-
+    Route::post   ('/like/{id}', [LikeController::class, 'like'])->name('like');
+    Route::post   ('/unlike/{id}', [LikeController::class, 'unlike'])->name('unlike');
+  
     // Rutas relacionadas con comentarios
-    Route::post('/comentarios/{id}', [ComentarioController::class, 'store'])->name('comentarios.store');
-    Route::get('/comentarios/{id}', [ComentarioController::class, 'index'])->name('comentarios.index');
+    Route::post   ('/comentarios/{id}', [ComentarioController::class, 'store'])->name('comentarios.store');
+    Route::get    ('/comentarios/{id}', [ComentarioController::class, 'index'])->name('comentarios.index');
 
     // Rutas relacionadas con notificaciones
-    Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
-    Route::patch('/notificaciones/{id}/marcar-leida', [NotificacionController::class, 'marcarLeida'])->name('notificaciones.marcarLeida');
-    Route::delete('/notificaciones/{id}/eliminar', [NotificacionController::class, 'eliminar'])->name('notificaciones.eliminar');
-    Route::delete('/notificaciones', [NotificacionController::class, 'eliminarTodas'])->name('notificaciones.eliminarTodas');
-    Route::patch('/notificaciones/marcar-todas-leidas', [NotificacionController::class, 'marcarTodasLeidas'])->name('notificaciones.marcarTodasLeidas');
+    Route::get    ('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
+    Route::patch  ('/notificaciones/{id}/marcar-leida', [NotificacionController::class, 'marcarLeida'])->name('notificaciones.marcarLeida');
+    Route::delete ('/notificaciones/{id}/eliminar', [NotificacionController::class, 'eliminar'])->name('notificaciones.eliminar');
+    Route::delete ('/notificaciones', [NotificacionController::class, 'eliminarTodas'])->name('notificaciones.eliminarTodas');
+    Route::patch  ('/notificaciones/marcar-todas-leidas', [NotificacionController::class, 'marcarTodasLeidas'])->name('notificaciones.marcarTodasLeidas');
 
     // Rutas relacionadas con la búsqueda
-    Route::get('/buscar', [SearchController::class, 'buscar'])->name('buscar');
-    Route::get('/posts/{id}', [PublicacionController::class, 'show'])->name('posts.show');
+    Route::get    ('/buscar', [SearchController::class, 'buscar'])->name('buscar');
+    Route::get    ('/posts/{id}', [PublicacionController::class, 'show'])->name('posts.show');
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
-    Route::delete('/admin/usuarios/{id}', [AdminController::class, 'eliminarUsuario'])->name('admin.usuarios.eliminar');
-    Route::delete('/admin/publicaciones/{id}', [AdminController::class, 'eliminarPublicacion'])->name('admin.publicaciones.eliminar');
-    Route::delete('/admin/comentarios/{id}', [AdminController::class, 'eliminarComentario'])->name('admin.comentarios.eliminar');
-    Route::get('/admin/usuarios/{id}/editar', [AdminController::class, 'editarUsuario'])->name('admin.usuarios.editar');
-    Route::put('/admin/usuarios/{id}', [AdminController::class, 'actualizarUsuario'])->name('admin.usuarios.actualizar');
+    Route::get    ('/admin', [AdminController::class, 'index'])->name('admin.index');
+    Route::delete ('/admin/usuarios/{id}', [AdminController::class, 'eliminarUsuario'])->name('admin.usuarios.eliminar');
+    Route::delete ('/admin/publicaciones/{id}', [AdminController::class, 'eliminarPublicacion'])->name('admin.publicaciones.eliminar');
+    Route::put    ('/admin/publicaciones/{id}', [PublicacionController::class, 'update'])->name('admin.publicaciones.actualizar');
+    Route::delete ('/admin/comentarios/{id}', [AdminController::class, 'eliminarComentario'])->name('admin.comentarios.eliminar');
+    Route::get    ('/admin/usuarios/{id}/editar', [AdminController::class, 'editarUsuario'])->name('admin.usuarios.editar');
+    Route::put    ('/admin/usuarios/{id}', [AdminController::class, 'actualizarUsuario'])->name('admin.usuarios.actualizar');
+    
 });
 
 require __DIR__.'/auth.php';

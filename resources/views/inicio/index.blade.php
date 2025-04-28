@@ -14,15 +14,53 @@
     <div id="principal">
         @foreach($publicaciones as $post)
         <div class="card post-card" style="width: 50%; margin-bottom: 20px;">
-            <div class="d-flex justify-content-between mb-3" style="padding: 1rem; cursor: default;">
-                <a href="{{ route('perfil.show', $post->usuario->id) }}">
-                    <img src="{{ $post->usuario && $post->usuario->avatar ? asset('storage/' . $post->usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}"
-                        style="width: 75px; border-radius: 50%;"
-                        alt="Imagen de perfil">
-                </a>
-                <p class="card-text">
-                    {{ $post->usuario ? $post->usuario->nombre : 'Usuario desconocido' }}
-                </p>
+            <div class="d-flex align-items-center justify-content-between p-3">
+                <div class="d-flex align-items-center" style="margin: 10px;">
+                    <a href="{{ route('perfil.show', $post->usuario->id) }}">
+                        <img src="{{ $post->usuario && $post->usuario->avatar ? asset('storage/' . $post->usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}"
+                            style="width: 75px; border-radius: 50%; margin-right: 10px;"
+                            alt="Imagen de perfil">
+                    </a>
+                    <p class="mb-0">
+                        {{ $post->usuario ? $post->usuario->nombre : 'Usuario desconocido' }}
+                    </p>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-link p-0 text-dark" type="button" id="dropdownMenuButton{{ $post->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ asset('images/3puntos.png') }}" alt="3puntos" style="width: 25px;">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton{{ $post->id }}">
+                        <!-- Ver perfil -->
+                        <li>
+                            <a class="dropdown-item" href="{{ route('perfil.show', $post->usuario->id) }}">Ver perfil</a>
+                        </li>
+
+                        <!-- Seguir / Parar de seguir -->
+                        @if(Auth::id() !== $post->usuario_id)
+                            <li>
+                                <button class="dropdown-item follow-button" 
+                                        data-usuario-id="{{ $post->usuario->id }}" 
+                                        data-following="{{ Auth::user()->siguiendo->contains($post->usuario->id) ? 'true' : 'false' }}">
+                                    {{ Auth::user()->siguiendo->contains($post->usuario->id) ? 'Parar de seguir' : 'Seguir' }}
+                                </button>
+                            </li>
+                        @endif
+
+                        <!-- Editar publicación -->
+                        @if(Auth::id() === $post->usuario_id || Auth::user()->rol === 'admin')
+                            <li>
+                                <button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editPostModal{{ $post->id }}">Editar</button>
+                            </li>
+                        @endif
+
+                        <!-- Eliminar publicación -->
+                        @if(Auth::id() === $post->usuario_id || Auth::user()->rol === 'admin')
+                            <li>
+                                <button class="dropdown-item" onclick="confirmDelete('{{ route('admin.publicaciones.eliminar', $post->id) }}')">Eliminar</button>
+                            </li>
+                        @endif
+                    </ul>
+                </div>
             </div>
             <div class="card-body" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#postModal{{ $post->id }}">
                 <h5 class="card-title">{{ $post->titulo }}</h5>
@@ -38,7 +76,7 @@
             @endif
             <div class="card-footer">
                 <div class="botones">
-
+                
                     <div>
                         <img src="{{ asset('images/Comentarios.png') }}" style="width: 25px;" alt="Comentarios">
                         <span class="ms-2">{{ $post->comentarios->count() }}</span>
@@ -105,12 +143,27 @@
                     @if($post->comentarios->count() > 0)
                         @foreach($post->comentarios->take(3) as $comentario)
                             <div class="comentario">
-                                <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
-
-                                <!-- Botón para eliminar comentario (solo para administradores) -->
-                                @if(Auth::id() === $post->usuario_id || Auth::user()->rol === 'admin')
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('admin.comentarios.eliminar', $comentario->id) }}')">X</button>
-                                @endif
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
+                                    </div>
+                                    <!-- Menú desplegable -->
+                                    <div class="dropdown">
+                                        <button class="btn btn-link p-0 text-dark" type="button" id="dropdownMenuButtonComentario{{ $comentario->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <img src="{{ asset('images/3puntos.png') }}" alt="3puntos" style="width: 20px;">
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="dropdownMenuButtonComentario{{ $comentario->id }}">
+                                            @if(Auth::id() === $comentario->usuario_id || Auth::user()->rol === 'admin')
+                                                <li>
+                                                    <button class="dropdown-item" onclick="confirmDelete('{{ route('admin.comentarios.eliminar', $comentario->id) }}')">Eliminar</button>
+                                                </li>
+                                            @endif
+                                            <li>
+                                                <button class="dropdown-item">Reportar</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         @endforeach
                         @if($post->comentarios->count() > 3)
@@ -120,6 +173,42 @@
                 </div>
             </div>
         </div>
+
+            <div class="modal fade" id="editPostModal{{ $post->id }}" tabindex="-1" aria-labelledby="editPostModalLabel{{ $post->id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editPostModalLabel{{ $post->id }}">Editar Publicación</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ route('admin.publicaciones.actualizar', $post->id) }}" method="POST" enctype="multipart/form-data" id="editPostForm{{ $post->id }}">
+                                @csrf
+                                @method('PUT')
+                                <div class="mb-3">
+                                    <label for="titulo{{ $post->id }}" class="form-label">Título</label>
+                                    <input type="text" class="form-control" id="titulo{{ $post->id }}" name="titulo" value="{{ $post->titulo }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="contenido{{ $post->id }}" class="form-label">Contenido</label>
+                                    <textarea class="form-control" id="contenido{{ $post->id }}" name="contenido" rows="5" required>{{ $post->contenido }}</textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="imagen{{ $post->id }}" class="form-label">Imagen (Opcional)</label>
+                                    <input type="file" class="form-control" id="imagen{{ $post->id }}" name="imagen" accept="image/*">
+                                    @if($post->imagen)
+                                        <img src="{{ asset('storage/' . $post->imagen) }}" alt="Imagen actual" class="img-fluid mt-2" style="max-height: 200px;">
+                                    @endif
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" form="editPostForm{{ $post->id }}" class="btn btn-primary">Guardar Cambios</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="modal fade" id="postModal{{ $post->id }}" tabindex="-1" aria-labelledby="postModalLabel{{ $post->id }}" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -236,11 +325,11 @@
                     @csrf
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título de la Publicación</label>
-                        <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Escribe un título atractivo" required>
+                        <input type="text" class="form-control" id="titulo" name="titulo" placeholder="Título...">
                     </div>
                     <div class="mb-3">
                         <label for="contenido" class="form-label">Contenido</label>
-                        <textarea class="form-control" id="contenido" name="contenido" rows="5" placeholder="¿Qué quieres compartir?" required></textarea>
+                        <textarea class="form-control" id="contenido" name="contenido" rows="5" placeholder="¿Qué quieres compartir?"></textarea>
                     </div>
                     <div class="mb-3">
                         <label for="imagen" class="form-label">Subir Imagen (Opcional)</label>
@@ -477,6 +566,40 @@
 
         $('.modal').on('hidden.bs.modal', function () {
             $(this).attr('aria-hidden', 'true'); // Restablece aria-hidden a true al cerrar el modal
+        });
+
+        $(document).on('click', '.follow-button', function (event) {
+            event.preventDefault();
+
+            const button = $(this);
+            const usuarioId = button.data('usuario-id');
+            const isFollowing = button.data('following') === 'true';
+            const url = isFollowing 
+                ? `/dejarDeSeguir/${usuarioId}` 
+                : `/seguir/${usuarioId}`;
+
+            // Mostrar un overlay de carga si es necesario
+            $('#loading-overlay').fadeIn();
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    // Actualizar el estado del botón
+                    button.data('following', !isFollowing);
+                    button.text(!isFollowing ? 'Parar de seguir' : 'Seguir');
+                },
+                error: function (xhr) {
+                    console.error('Error al procesar la solicitud:', xhr.responseText);
+                },
+                complete: function () {
+                    // Ocultar el overlay de carga
+                    $('#loading-overlay').fadeOut();
+                }
+            });
         });
     });
 

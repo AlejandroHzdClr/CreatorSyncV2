@@ -148,7 +148,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p>{{ $post->contenido }}</p>
+                                <p style="white-space: pre-wrap;">{{ $post->contenido }}</p>
                                 @if($post->imagen)
                                     <img src="{{ asset('storage/' . $post->imagen) }}" class="img-fluid" alt="Imagen de {{ $post->titulo }}">
                                 @endif

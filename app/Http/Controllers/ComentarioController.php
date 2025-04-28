@@ -43,4 +43,17 @@ class ComentarioController extends Controller
 
         return response()->json($comentarios);
     }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'contenido' => 'required|string|max:500',
+        ]);
+
+        $comentario = Comentario::findOrFail($id);
+        $comentario->contenido = $request->contenido;
+        $comentario->save();
+
+        return response()->json($comentario);
+    }
 }

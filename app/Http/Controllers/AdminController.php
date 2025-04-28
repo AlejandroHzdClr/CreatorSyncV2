@@ -43,11 +43,13 @@ class AdminController extends Controller
 
     public function eliminarPublicacion($id)
     {
-        if (Auth::user()->rol !== 'admin') {
+        $publicacion = Publicacion::findOrFail($id);
+
+        // Verificar si el usuario es el propietario o un administrador
+        if (Auth::id() !== $publicacion->usuario_id && Auth::user()->rol !== 'admin') {
             return redirect('/')->with('error', 'No tienes permiso para realizar esta acción.');
         }
 
-        $publicacion = Publicacion::findOrFail($id);
         $publicacion->delete();
 
         return redirect()->back()->with('success', 'Publicación eliminada correctamente.');
@@ -55,11 +57,13 @@ class AdminController extends Controller
 
     public function eliminarComentario($id)
     {
-        if (Auth::user()->rol !== 'admin') {
+        $comentario = Comentario::findOrFail($id);
+
+        // Verificar si el usuario es el propietario del comentario, de la publicación asociada, o un administrador
+        if (Auth::id() !== $comentario->usuario_id && Auth::id() !== $comentario->publicacion->usuario_id && Auth::user()->rol !== 'admin') {
             return redirect('/')->with('error', 'No tienes permiso para realizar esta acción.');
         }
 
-        $comentario = Comentario::findOrFail($id);
         $comentario->delete();
 
         return redirect()->back()->with('success', 'Comentario eliminado correctamente.');
