@@ -86,16 +86,22 @@ class ConfiguracionController extends Controller
     {
         $usuario = Auth::user();
 
-        // Actualizar o crear la configuración de notificaciones
-        $usuario->confNotificacion()->updateOrCreate(
-            ['user_id' => $usuario->id],
-            [
-                'likes' => $request->input('likes', false),
-                'seguidores' => $request->input('seguidores', false),
-                'comentarios' => $request->input('comentarios', false),
-            ]
-        );
+        // Asegúrate de que el usuario tenga una configuración de notificaciones
+        if (!$usuario->confNotificacion) {
+            $usuario->confNotificacion()->create([
+                'likes' => 1,
+                'seguidores' => 1,
+                'comentarios' => 1,
+            ]);
+        }
 
-        return redirect('/')->with('success', 'Configuración de notificaciones actualizada correctamente.');
+        // Convierte los valores de los checkboxes a 1 o 0
+        $usuario->confNotificacion->update([
+            'likes' => $request->has('likes') ? 1 : 0,
+            'seguidores' => $request->has('seguidores') ? 1 : 0,
+            'comentarios' => $request->has('comentarios') ? 1 : 0,
+        ]);
+
+        return redirect()->route('configuracion.index')->with('success', 'Configuración de notificaciones actualizada correctamente.');
     }
 }

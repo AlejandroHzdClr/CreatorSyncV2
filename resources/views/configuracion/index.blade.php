@@ -90,17 +90,17 @@
                         @csrf
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="notiLikes" name="likes" 
-                                {{ Auth::user()->confNotificacion->likes ? 'checked' : '' }}>
+                                {{ Auth::user()->confNotificacion?->likes ? 'checked' : '' }}>
                             <label class="form-check-label" for="notiLikes">Likes</label>
                         </div>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="notiSeguidores" name="seguidores" 
-                                {{ Auth::user()->confNotificacion->seguidores ? 'checked' : '' }}>
+                                {{ Auth::user()->confNotificacion?->seguidores ? 'checked' : '' }}>
                             <label class="form-check-label" for="notiSeguidores">Seguidores</label>
                         </div>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="notiComentarios" name="comentarios" 
-                                {{ Auth::user()->confNotificacion->comentarios ? 'checked' : '' }}>
+                                {{ Auth::user()->confNotificacion?->comentarios ? 'checked' : '' }}>
                             <label class="form-check-label" for="notiComentarios">Comentarios</label>
                         </div>
                         <button type="submit" class="btn btn-primary mt-3">Guardar</button>
