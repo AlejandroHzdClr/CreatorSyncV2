@@ -97,9 +97,9 @@ class ConfiguracionController extends Controller
 
         // Actualiza los valores de las notificaciones
         $usuario->confNotificacion->update([
-            'likes' => $request->has('likes') ? 0 : 1, // Si no está marcado, será 0
+            'likes' => $request->has('likes') ? 1 : 0, // Si está marcado, será 1
             'seguidores' => $request->has('seguidores') ? 1 : 0,
-            'comentarios' => $request->has('comentarios') ? 0 : 1,
+            'comentarios' => $request->has('comentarios') ? 1 : 0,
         ]);
 
         return redirect()->route('configuracion.index')->with('success', 'Configuración de notificaciones actualizada correctamente.');

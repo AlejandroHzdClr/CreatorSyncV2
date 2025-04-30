@@ -22,18 +22,16 @@ class ConfiguracionNotificacionesTest extends TestCase
         $this->actingAs($usuario);
 
         $response = $this->post('/configuracion/notificaciones', [
-            'likes' => null,
-            'seguidores' => "on",
-            'comentarios' => null,
+            'seguidores' => "on", // Solo enviar las casillas marcadas
         ]);
 
         $response->assertRedirect('/configuracion');
 
         $this->assertDatabaseHas('conf_notificacion', [
             'user_id' => $usuario->id,
-            'likes' => 0,
-            'seguidores' => 1,
-            'comentarios' => 0,
+            'likes' => 0, // Likes debe ser 0 porque no se envió
+            'seguidores' => 1, // Seguidores debe ser 1 porque se envió
+            'comentarios' => 0, // Comentarios debe ser 0 porque no se envió
         ]);
     }
 }
