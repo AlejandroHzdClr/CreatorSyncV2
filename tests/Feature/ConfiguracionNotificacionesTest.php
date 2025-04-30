@@ -22,16 +22,16 @@ class ConfiguracionNotificacionesTest extends TestCase
         $this->actingAs($usuario);
 
         $response = $this->post('/configuracion/notificaciones', [
-            'likes' => false,
-            'seguidores' => true,
-            'comentarios' => false,
+            'likes' => null,
+            'seguidores' => "on",
+            'comentarios' => null,
         ]);
 
-        $response->assertRedirect('/'); // Cambia la ruta según tu aplicación
+        $response->assertRedirect('/configuracion');
 
         $this->assertDatabaseHas('conf_notificacion', [
             'user_id' => $usuario->id,
-            'likes' => 0, // Verifica como 0 en lugar de false
+            'likes' => 0,
             'seguidores' => 1,
             'comentarios' => 0,
         ]);

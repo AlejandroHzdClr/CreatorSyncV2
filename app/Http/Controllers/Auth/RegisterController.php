@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\ConfNotificacion;
 
 class RegisterController extends Controller
 {
@@ -37,6 +38,13 @@ class RegisterController extends Controller
             'password' => bcrypt($request->password),  // Encriptamos la password
             'rol' => 'usuario',  // El rol predeterminado, puedes modificarlo
             'estado' => 'activo',  // El estado predeterminado
+        ]);
+
+        ConfNotificacion::create([
+            'user_id' => $usuario->id,
+            'likes' => 1,
+            'seguidores' => 1,
+            'comentarios' => 1,
         ]);
 
         // Iniciar sesión automáticamente
