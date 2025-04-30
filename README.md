@@ -67,6 +67,7 @@ Sigue estos pasos para instalar y configurar el proyecto:
     Abre tu navegador y ve a: http://localhost:8000
 
 ## Test
+1. **Iniciar los test**
     ```bash
     php artisan test
 
