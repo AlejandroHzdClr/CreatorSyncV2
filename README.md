@@ -37,6 +37,7 @@ Sigue estos pasos para instalar y configurar el proyecto:
    cd CreatorSync
 
 2. **Descargar lo necesario**:
+    ```bash
     composer install
     npm install
 
@@ -46,24 +47,28 @@ Sigue estos pasos para instalar y configurar el proyecto:
     DB_PASSWORD: Contraseña de la base de datos.
 
 4. **Generar la clave de la aplicación**
+    ```bash
     php artisan key:generate
 
 5. **Ejecutar las migraciones y seeders**
+    ```bash
     php artisan migrate --seed
 
 6. **Compilar los assets**
+    ```bash
     npm run dev
 
 ## Uso
 1. **Iniciar el servidor de desarrollo:**
+    ```bash
     php artisan serve
 
 2. **Acceder a la aplicación:**
     Abre tu navegador y ve a: http://localhost:8000
 
 ## Test
-
-php artisan test
+    ```bash
+    php artisan test
 
 ## Licencia
 Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.
