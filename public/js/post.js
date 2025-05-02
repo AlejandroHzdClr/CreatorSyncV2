@@ -54,32 +54,70 @@ $(document).ready(function () {
     });
 
     // Funcionalidad de "Comentarios"
-    $(document).on('submit', '.comentario-form', function (event) {
+    $('.comentario-form').off('submit').on('submit', function (event) {
         event.preventDefault();
-
+    
         const form = $(this);
         const publicacionId = form.data('publicacion-id');
         const input = form.find('.comentario-input');
         const contenido = input.val();
         const comentariosList = $(`.comentarios-list[data-publicacion-id="${publicacionId}"]`);
-
+    
+        $('#loading-overlay').fadeIn();
+    
         $.ajax({
             url: `/comentarios/${publicacionId}`,
             method: 'POST',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content'),
-                contenido: contenido
+                contenido: contenido,
             },
             success: function (response) {
-                comentariosList.append(`
-                    <div class="comentario mt-2">
-                        <strong>${response.usuario_nombre}:</strong> ${response.contenido}
+                // Generar el HTML del nuevo comentario
+                const nuevoComentario = `
+                    <div class="comentario mb-2" id="comentario-${response.id}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <!-- Imagen del usuario -->
+                                <a href="/perfil/${response.usuario_id}" class="me-2">
+                                    <img src="${response.usuario_avatar}" 
+                                        alt="Imagen de ${response.usuario_nombre}" 
+                                        style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                                </a>
+                                <!-- Nombre y contenido del comentario -->
+                                <strong>${response.usuario_nombre}:</strong> ${response.contenido}
+                            </div>
+                            <!-- Menú desplegable -->
+                            <div class="dropdown">
+                                <button class="btn btn-link p-0 text-dark" type="button" id="dropdownMenuButtonComentario${response.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="/images/3puntos.png" alt="3puntos" style="width: 20px;">
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="dropdownMenuButtonComentario${response.id}">
+                                    <li>
+                                        <a class="dropdown-item" href="/perfil/${response.usuario_id}">Ver perfil</a>
+                                    </li>
+                                    ${response.puede_eliminar ? `
+                                    <li>
+                                        <button class="dropdown-item delete-comment-button" data-comentario-id="${response.id}">Eliminar</button>
+                                    </li>` : ''}
+                                    <li>
+                                        <button class="dropdown-item" onclick="copiarContenido('${response.contenido}')">Copiar contenido</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                `);
-                input.val('');
+                `;
+    
+                // Agregar el nuevo comentario a la lista
+                comentariosList.append(nuevoComentario);
+                input.val(''); // Limpiar el campo de entrada
             },
             error: function (xhr) {
                 console.error('Error al agregar el comentario:', xhr.responseText);
+            },
+            complete: function () {
+                $('#loading-overlay').fadeOut();
             }
         });
     });
@@ -117,6 +155,15 @@ $(document).ready(function () {
 });
 
 function confirmDelete(actionUrl) {
+    // Cerrar otros modales abiertos
+    const openModals = document.querySelectorAll('.modal.show');
+    openModals.forEach(openModal => {
+        const bootstrapModal = bootstrap.Modal.getInstance(openModal);
+        if (bootstrapModal) {
+            bootstrapModal.hide();
+        }
+    });
+
     // Configurar la acción del formulario de eliminación
     const deleteForm = document.getElementById('deleteForm');
     deleteForm.action = actionUrl;

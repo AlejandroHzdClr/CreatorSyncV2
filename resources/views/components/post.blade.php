@@ -1,4 +1,4 @@
-<div class="card post-card" style="width: 50%; margin-bottom: 20px;">
+<div class="card post-card" style="width: {{ $attributes->get('width', 50) }}%; margin-bottom: 20px;">
     <div class="d-flex align-items-center justify-content-between p-3">
         <div class="d-flex align-items-center" style="margin: 10px;">
             <a href="{{ route('perfil.show', $post->usuario->id) }}">
@@ -70,38 +70,48 @@
                 <button class="btn btn-primary" type="submit">Comentar</button>
             </div>
         </form>
-        <div class="comentarios-list" data-publicacion-id="{{ $post->id }}" style="margin-top: 10px;">
-                    @if($post->comentarios->count() > 0)
-                        @foreach($post->comentarios->take(3) as $comentario)
-                            <div class="comentario">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
-                                    </div>
-                                    <!-- Menú desplegable -->
-                                    <div class="dropdown">
-                                        <button class="btn btn-link p-0 text-dark" type="button" id="dropdownMenuButtonComentario{{ $comentario->id }}" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <img src="{{ asset('images/3puntos.png') }}" alt="3puntos" style="width: 20px;">
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="dropdownMenuButtonComentario{{ $comentario->id }}">
-                                            @if(Auth::id() === $comentario->usuario_id || Auth::user()->rol === 'admin')
-                                                <li>
-                                                    <button class="dropdown-item" onclick="confirmDelete('{{ route('admin.comentarios.eliminar', $comentario->id) }}')">Eliminar</button>
-                                                </li>
-                                            @endif
-                                            <li>
-                                                <button class="dropdown-item" onclick="copiarContenido('{{ $comentario->contenido }}')">Copiar contenido</button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+        <div class="comentarios-list mb-3" data-publicacion-id="{{ $post->id }}" style="margin-bottom: 20px;">
+            @if($post->comentarios->count() > 0)
+                @foreach($post->comentarios->take(3) as $comentario)
+                    <div class="comentario">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <!-- Imagen del usuario -->
+                                <a href="{{ route('perfil.show', $comentario->usuario->id) }}" class="me-2">
+                                    <img src="{{ $comentario->usuario->avatar ? asset('storage/' . $comentario->usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}"
+                                        alt="Imagen de {{ $comentario->usuario->nombre }}"
+                                        style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                                </a>
+                                <!-- Nombre y contenido del comentario -->
+                                <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
                             </div>
-                        @endforeach
-                        @if($post->comentarios->count() > 3)
-                            <p>...</p>
-                        @endif
-                    @endif
-                </div>
+                            <!-- Menú desplegable -->
+                            <div class="dropdown">
+                                <button class="btn btn-link p-0 text-dark" type="button" id="dropdownMenuButtonComentario{{ $comentario->id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="{{ asset('images/3puntos.png') }}" alt="3puntos" style="width: 20px;">
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="dropdownMenuButtonComentario{{ $comentario->id }}">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('perfil.show', $comentario->usuario->id) }}">Ver perfil</a>
+                                    </li>
+                                    @if(Auth::id() === $comentario->usuario_id || Auth::user()->rol === 'admin')
+                                        <li>
+                                            <button class="dropdown-item" onclick="confirmDelete('{{ route('admin.comentarios.eliminar', $comentario->id) }}')">Eliminar</button>
+                                        </li>
+                                    @endif
+                                    <li>
+                                        <button class="dropdown-item" onclick="copiarContenido('{{ $comentario->contenido }}')">Copiar contenido</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+                @if($post->comentarios->count() > 3)
+                    <p>...</p>
+                @endif
+            @endif
+        </div>
     </div>
 </div>
 
@@ -113,6 +123,14 @@
             </div>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
         </div>
+    </div>
+</div>
+
+<div id="customConfirm" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1060; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <p>¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.</p>
+    <div class="d-flex justify-content-end">
+        <button id="cancelDelete" class="btn btn-secondary me-2">Cancelar</button>
+        <button id="confirmDeleteButton" class="btn btn-danger">Eliminar</button>
     </div>
 </div>
 

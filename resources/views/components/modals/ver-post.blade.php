@@ -22,7 +22,14 @@
                     <hr>
                     <div class="comentario">
                         <div class="d-flex justify-content-between align-items-center">
-                            <div>
+                            <div class="d-flex align-items-center">
+                                <!-- Imagen del usuario -->
+                                <a href="{{ route('perfil.show', $comentario->usuario->id) }}" class="me-2">
+                                    <img src="{{ $comentario->usuario->avatar ? asset('storage/' . $comentario->usuario->avatar) : asset('images/PerfilPredeterminado.jpg') }}"
+                                        alt="Imagen de {{ $comentario->usuario->nombre }}"
+                                        style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                                </a>
+                                <!-- Nombre y contenido del comentario -->
                                 <strong>{{ $comentario->usuario->nombre }}:</strong> {{ $comentario->contenido }}
                             </div>
                             <!-- Menú desplegable -->
@@ -31,13 +38,16 @@
                                     <img src="{{ asset('images/3puntos.png') }}" alt="3puntos" style="width: 20px;">
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="dropdownMenuButtonComentario{{ $comentario->id }}">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('perfil.show', $comentario->usuario->id) }}">Ver perfil</a>
+                                    </li>
                                     @if(Auth::id() === $comentario->usuario_id || Auth::user()->rol === 'admin')
                                         <li>
                                             <button class="dropdown-item" onclick="confirmDelete('{{ route('admin.comentarios.eliminar', $comentario->id) }}')">Eliminar</button>
                                         </li>
                                     @endif
                                     <li>
-                                        <button class="dropdown-item">Reportar</button>
+                                        <button class="dropdown-item" onclick="copiarContenido('{{ $comentario->contenido }}')">Copiar contenido</button>
                                     </li>
                                 </ul>
                             </div>

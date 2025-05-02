@@ -35,8 +35,14 @@ class ComentarioController extends Controller
         }
 
         return response()->json([
+            'id' => $comentario->id,
             'contenido' => $comentario->contenido,
-            'usuario_nombre' => auth()->user()->nombre, // Incluye el nombre del usuario autenticado
+            'usuario_id' => auth()->id(),
+            'usuario_nombre' => auth()->user()->nombre,
+            'usuario_avatar' => auth()->user()->avatar 
+                ? asset('storage/' . auth()->user()->avatar) 
+                : asset('images/PerfilPredeterminado.jpg'),
+            'puede_eliminar' => auth()->id() === $comentario->usuario_id || auth()->user()->rol === 'admin',
         ]);
     }
 

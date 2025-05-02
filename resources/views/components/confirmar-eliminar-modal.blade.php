@@ -1,4 +1,4 @@
-<div class="modal fade" id="confirmDeleteModal{{ $id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel{{ $id }}" aria-hidden="true">
+<div class="modal fade" id="confirmDeleteModal{{ $id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel{{ $id }}" aria-hidden="true" style="z-index: 10600;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
-                ¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.
+                ¿Seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

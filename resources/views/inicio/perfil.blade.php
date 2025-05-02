@@ -112,7 +112,7 @@
         <div id="publicaciones" class="container" style="display: flex; flex-direction: column; align-items: center; margin-bottom:7%">
             <h1 class="text-center mb-4">Publicaciones</h1>
             @foreach($publicaciones as $post)
-            <x-post :post="$post" />
+                <x-post :post="$post" :width="100" />
             @endforeach
         </div>
     </div>
@@ -164,14 +164,29 @@
  </div>
 
 <script>
-    function confirmDelete(actionUrl) {
-        const deleteForm = document.getElementById('deleteForm');
-        deleteForm.action = actionUrl; // Establece la URL de acción del formulario
-        const confirmModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-        confirmModal.show(); // Muestra el modal
-    }
 
     $(document).ready(function () {
+
+        // Agregar nueva red social
+        let redIndex = {{ isset($usuario->perfil->redes_sociales) ? count($usuario->perfil->redes_sociales) : 0 }};
+ 
+         // Agregar un nuevo campo para redes sociales
+        $('#agregarRed').on('click', function () {
+            const nuevaRed = `
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" name="redes[${redIndex}][nombre]" placeholder="Nombre de la red social">
+                    <input type="url" class="form-control" name="redes[${redIndex}][url]" placeholder="URL de la red social">
+                    <button type="button" class="btn btn-danger eliminar-red" onclick="eliminarRed(this)">Eliminar</button>
+                </div>`;
+            $('#redesSocialesInputs').append(nuevaRed);
+            redIndex++;
+        });
+ 
+        // Eliminar un campo de red social
+        window.eliminarRed = function (button) {
+            $(button).closest('.input-group').remove();
+        };
+
         // Manejar "Seguir" y "Dejar de seguir"
         $('.seguir-button').on('click', function () {
             const button = $(this);
@@ -206,97 +221,6 @@
                 },
                 error: function (xhr) {
                     console.error('Error al procesar la solicitud:', xhr.responseText);
-                },
-                complete: function () {
-                    // Ocultar el overlay de carga
-                    $('#loading-overlay').fadeOut();
-                }
-            });
-        });
-        
-        // Manejar "Me gusta"
-        $('.like-button').on('click', function () {
-            const button = $(this);
-            const publicacionId = button.data('publicacion-id');
-            const likeCountElement = $(`.like-count[data-publicacion-id="${publicacionId}"]`);
-            const likeImage = button.find('img');
-
-            const isLiked = likeImage.attr('src').includes('LikeDado.png');
-            const url = isLiked ? `/unlike/${publicacionId}` : `/like/${publicacionId}`;
-
-            // Mostrar el overlay de carga
-            $('#loading-overlay').fadeIn();
-
-            $.ajax({
-                url: url,
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    likeCountElement.text(`${response.like_count} Me gusta`);
-                    likeImage.attr('src', isLiked ? '{{ asset('images/Like.png') }}' : '{{ asset('images/LikeDado.png') }}');
-                },
-                error: function (xhr) {
-                    console.error('Error al procesar el like:', xhr.responseText);
-                },
-                complete: function () {
-                    // Ocultar el overlay de carga
-                    $('#loading-overlay').fadeOut();
-                }
-            });
-        });
-
-        // Agregar nueva red social
-        let redIndex = {{ isset($usuario->perfil->redes_sociales) ? count($usuario->perfil->redes_sociales) : 0 }};
- 
-         // Agregar un nuevo campo para redes sociales
-         $('#agregarRed').on('click', function () {
-             const nuevaRed = `
-                 <div class="input-group mb-2">
-                     <input type="text" class="form-control" name="redes[${redIndex}][nombre]" placeholder="Nombre de la red social">
-                     <input type="url" class="form-control" name="redes[${redIndex}][url]" placeholder="URL de la red social">
-                     <button type="button" class="btn btn-danger eliminar-red" onclick="eliminarRed(this)">Eliminar</button>
-                 </div>`;
-             $('#redesSocialesInputs').append(nuevaRed);
-             redIndex++;
-         });
- 
-         // Eliminar un campo de red social
-         window.eliminarRed = function (button) {
-             $(button).closest('.input-group').remove();
-         };
-
-        // Manejar comentarios
-        $('.comentario-form').on('submit', function (event) {
-            event.preventDefault();
-
-            const form = $(this);
-            const publicacionId = form.data('publicacion-id');
-            const input = form.find('.comentario-input');
-            const contenido = input.val();
-            const comentariosList = $(`.comentarios-list[data-publicacion-id="${publicacionId}"]`);
-
-            // Mostrar el overlay de carga
-            $('#loading-overlay').fadeIn();
-
-            $.ajax({
-                url: `/comentarios/${publicacionId}`,
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    contenido: contenido,
-                },
-                success: function (response) {
-                    comentariosList.append(`
-                        <div class="comentario mb-2">
-                            <strong>{{ Auth::user()->nombre }}:</strong> ${contenido}
-                        </div>
-                    `);
-                    input.val('');
-                },
-                error: function (xhr) {
-                    console.error('Error al agregar el comentario:', xhr.responseText);
                 },
                 complete: function () {
                     // Ocultar el overlay de carga

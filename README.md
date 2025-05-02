@@ -33,7 +33,7 @@ Sigue estos pasos para instalar y configurar el proyecto:
 
 1. **Clonar el repositorio**:
    ```bash
-   git clone https://github.com/tu-usuario/tu-repositorio.git
+   git clone https://github.com/AlejandroHzdClr/CreatorSyncV2
    cd CreatorSync
 
 2. **Descargar lo necesario**:
@@ -42,6 +42,7 @@ Sigue estos pasos para instalar y configurar el proyecto:
     npm install
 
 3. **Cambiar el env**
+    ```bash
     DB_DATABASE: Nombre de la base de datos.
     DB_USERNAME: Usuario de la base de datos.
     DB_PASSWORD: Contraseña de la base de datos.
