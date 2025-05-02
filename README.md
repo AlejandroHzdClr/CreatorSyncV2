@@ -20,7 +20,7 @@
 - **Fase de Análisis**: https://docs.google.com/document/d/1UZVIq9SyswF08_aqHI9GeD_xk4NUH3AHxCLdudrOO5s/edit?usp=sharing
 - **Fase de Diseño**: https://docs.google.com/document/d/1lvQ-AfhBz3kvG6DJZdUviaEE7-0-rpduUCgfYxC5-l0/edit?usp=sharing
 - **Tablas BBDD**: https://drive.google.com/file/d/1EsPfTWGQUdvxKTTNRMAff0owusajqMwJ/view?usp=sharing
-- **Detalles del proyecto**: https://miro.com/welcomeonboard/ak5FSWNwd2N5VzhTUnkxZHZxbHp3dDRIMXhJeENRRDhleVNHN0pRN2lnNjQrSGROWGxPV3V6SmJVQkJ5b01uanVOMzJFTHZPa213ZkI0dmhhaXg4RFlKZlN5MUQ1S2grSWgzZ1RscDlJN2Y5MHlDc1p0OXE4c0FxbmZlNWY3bnJBd044SHFHaVlWYWk0d3NxeHNmeG9BPT0hdjE=?share_link_id=95043088779
+- **Pizarra Online**: https://miro.com/welcomeonboard/ak5FSWNwd2N5VzhTUnkxZHZxbHp3dDRIMXhJeENRRDhleVNHN0pRN2lnNjQrSGROWGxPV3V6SmJVQkJ5b01uanVOMzJFTHZPa213ZkI0dmhhaXg4RFlKZlN5MUQ1S2grSWgzZ1RscDlJN2Y5MHlDc1p0OXE4c0FxbmZlNWY3bnJBd044SHFHaVlWYWk0d3NxeHNmeG9BPT0hdjE=?share_link_id=95043088779
 
 
 ## Requisitos Previos
