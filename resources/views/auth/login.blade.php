@@ -1,14 +1,14 @@
 <x-guest-layout>
-    <div class="flex flex-col md:flex-row bg-white shadow-xl rounded-2xl overflow-hidden max-w-4xl w-full mx-auto my-12">
+    <div class="flex flex-col bg-white shadow-xl rounded-2xl overflow-hidden max-w-2xl w-full mx-auto my-8">
 
-        <!-- Lado del logo -->
-        <div class="md:w-1/2 bg-indigo-600 flex items-center justify-center p-10">
-            <img src="{{ asset('images/CreatorsSyncLogo.png') }}" alt="Logo" class="w-44 h-44 hover:scale-110 transition-transform duration-300">
+        <!-- Imagen arriba -->
+        <div class="w-full bg-white flex items-center justify-center p-4">
+            <img src="{{ asset('images/CreatorsSyncLogo.png') }}" alt="Logo" class="w-2/3 h-24 object-contain hover:scale-110 transition-transform duration-300">
         </div>
 
-        <!-- Lado del formulario -->
-        <div class="md:w-1/2 p-8 md:p-12 bg-white">
-            <h2 class="text-3xl font-bold text-gray-800 text-center mb-6">Iniciar sesión</h2>
+        <!-- Formulario abajo -->
+        <div class="w-full p-6 md:p-8 bg-white">
+            <h2 class="text-2xl font-bold text-gray-800 text-center mb-4">Iniciar sesión</h2>
 
             <form method="POST" action="{{ route('login') }}">
                 @csrf
@@ -23,7 +23,7 @@
                 </div>
 
                 <!-- Contraseña -->
-                <div class="mb-6">
+                <div class="mb-4">
                     <x-input-label for="password" :value="__('Contraseña')" />
                     <x-text-input id="password" name="password" type="password"
                         class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
@@ -46,7 +46,7 @@
             </form>
 
             <!-- Enlace a registro -->
-            <p class="text-center text-sm text-gray-600 mt-6">
+            <p class="text-center text-sm text-gray-600 mt-4">
                 ¿No tienes cuenta?
                 <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-800">Regístrate aquí</a>
             </p>
