@@ -1,30 +1,58 @@
-FROM php:8.2-apache
+# Usa una imagen base de PHP con Apache
+FROM php:8.1-apache
 
-# Instalar extensiones necesarias
+# Instala extensiones necesarias para Laravel
 RUN apt-get update && apt-get install -y \
-    libzip-dev unzip zip git curl libpq-dev \
-    && docker-php-ext-install pdo pdo_mysql
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    nodejs \
+    npm \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Habilitar mod_rewrite
+# Habilita el módulo de reescritura de Apache
 RUN a2enmod rewrite
 
-# Copiar archivos del proyecto
-COPY . /var/www/html
+# Instala Composer
+COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Establecer permisos
-RUN chown -R www-data:www-data /var/www/html
-
-# Establecer el directorio de trabajo
+# Establece el directorio de trabajo
 WORKDIR /var/www/html
 
-# Instalar Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Copia los archivos del proyecto al contenedor
+COPY . /var/www/html
 
-# Instalar dependencias de Laravel
+# Cambia los permisos del directorio de almacenamiento y caché
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Instala dependencias de Composer y npm
 RUN composer install --no-dev --optimize-autoloader
+RUN npm install
 
-# Generar la clave de aplicación
+# Genera la clave de la aplicación
 RUN php artisan key:generate
 
-# Configuración de Apache
-COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
+# Ejecuta las migraciones y seeders
+RUN php artisan migrate --force
+RUN php artisan db:seed --force
+
+# Compila los assets
+RUN npm run dev
+
+# Crea el enlace simbólico para storage
+RUN php artisan storage:link
+
+# Configura el archivo de host virtual de Apache
+COPY ./docker/apache.conf /etc/apache2/sites-available/000-default.conf
+
+# Expone el puerto 80
+EXPOSE 80
+
+# Comando por defecto para iniciar Apache
+CMD ["apache2-foreground"]
