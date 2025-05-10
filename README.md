@@ -49,7 +49,7 @@ Sigue estos pasos para instalar y configurar el proyecto:
     composer install
     npm install
 
-3. **Cambiar el env**
+3. **Copiar y cambiar el env**
     ```bash
     DB_DATABASE: Nombre de la base de datos.
     DB_USERNAME: Usuario de la base de datos.
@@ -61,11 +61,16 @@ Sigue estos pasos para instalar y configurar el proyecto:
 
 5. **Ejecutar las migraciones y seeders**
     ```bash
-    php artisan migrate --seed
+    php artisan migrate
+    php artisan db:seed
 
 6. **Compilar los assets**
     ```bash
     npm run dev
+
+7. **Hacer el enlace simbólico con storage**
+    ```bash
+    php artisan storage:link
 
 ## Uso
 1. **Iniciar el servidor de desarrollo:**

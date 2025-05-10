@@ -24,7 +24,7 @@
                 </div>
 
                 <!-- Contraseña -->
-                <div class="mb-6">
+                <div class="mb-4">
                     <x-input-label for="password" :value="__('Contraseña')" />
                     <x-text-input id="password" name="password" type="password"
                         class="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
@@ -42,7 +42,7 @@
             </form>
 
             <!-- Enlace a registro -->
-            <p class="text-center text-sm text-gray-600 mt-6">
+            <p class="text-center text-sm text-gray-600 mt-4">
                 ¿No tienes cuenta?
                 <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-800">Regístrate aquí</a>
             </p>
