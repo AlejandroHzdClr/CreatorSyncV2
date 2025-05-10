@@ -1,13 +1,14 @@
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 <x-guest-layout>
-    <div class="flex flex-col md:flex-row bg-white shadow-xl rounded-2xl overflow-hidden max-w-4xl w-full mx-auto my-12">
+    <div class="flex flex-col bg-white shadow-xl rounded-2xl overflow-hidden max-w-4xl w-full mx-auto my-12">
 
         <!-- Lado del logo -->
-        <div class="md:w-1/2 bg-indigo-600 flex items-center justify-center p-10">
+        <div class="bg-indigo-600 flex items-center justify-center p-10">
             <img src="{{ asset('images/CreatorsSyncLogo.png') }}" alt="Logo" class="w-44 h-44 hover:scale-110 transition-transform duration-300">
         </div>
 
         <!-- Lado del formulario -->
-        <div class="md:w-1/2 p-8 md:p-12 bg-white">
+        <div class="p-8 md:p-12 bg-white">
             <h2 class="text-3xl font-bold text-gray-800 text-center mb-6">Iniciar sesión</h2>
 
             <form method="POST" action="{{ route('login') }}">
@@ -33,11 +34,6 @@
 
                 <!-- Olvidaste contraseña + botón -->
                 <div class="flex items-center justify-between mb-4">
-                    @if (Route::has('password.request'))
-                        <a class="text-sm text-indigo-600 hover:text-indigo-800" href="{{ route('password.request') }}">
-                            ¿Olvidaste tu contraseña?
-                        </a>
-                    @endif
 
                     <x-primary-button class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg transition-colors duration-200">
                         {{ __('Entrar') }}

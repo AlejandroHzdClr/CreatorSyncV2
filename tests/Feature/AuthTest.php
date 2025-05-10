@@ -13,6 +13,7 @@ class AuthTest extends TestCase
     public function test_usuario_puede_registrarse()
     {
         $response = $this->post('/register', [
+            '_token' => csrf_token(),
             'nombre' => 'Nuevo Usuario',
             'email' => 'nuevo@example.com',
             'password' => 'password', // Contraseña sin hashear
